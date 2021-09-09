@@ -1,5 +1,6 @@
 #include <math.h>
 #include "RayTracerMath.h"
+#include <iostream>
 
 /////////////
 // Vector3 //
@@ -52,12 +53,11 @@ Vector3 Vector3::operator/(const float c) const {
    return result;
 }
 
-static Vector3 cross(Vector3 v1, Vector3 v2) {
-   Vector3 result;
-   result.x = v1.y * v2.z - v1.z * v2.y;
-   result.y = v1.z * v2.x - v1.x * v2.z;
-   result.z = v1.x * v2.y - v1.y * v2.x;
-   return result;
+Vector3 Vector3::cross(Vector3 v1, Vector3 v2) {
+   float resX = v1.y * v2.z - v1.z * v2.y;
+   float resY = v1.z * v2.x - v1.x * v2.z;
+   float resZ = v1.x * v2.y - v1.y * v2.x;
+   return Vector3(resX, resY, resZ);
 }
 
 /////////

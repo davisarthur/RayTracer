@@ -12,9 +12,8 @@ class Vector3 {
       Vector3 operator+(const Vector3&) const;
       Vector3 operator-(const Vector3&) const;
       Vector3 operator*(const float) const;
-      Vector3 operator/(const float) const;
-
-      static Vector3 cross(Vector3 v1, Vector3 v2);
+      Vector3 operator/(const float) const; 
+      static Vector3 cross(Vector3 v1, Vector3 v2);   
 };
 
 class Ray {
