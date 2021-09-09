@@ -52,6 +52,14 @@ Vector3 Vector3::operator/(const float c) const {
    return result;
 }
 
+static Vector3 cross(Vector3 v1, Vector3 v2) {
+   Vector3 result;
+   result.x = v1.y * v2.z - v1.z * v2.y;
+   result.y = v1.z * v2.x - v1.x * v2.z;
+   result.z = v1.x * v2.y - v1.y * v2.x;
+   return result;
+}
+
 /////////
 // Ray //
 /////////
@@ -67,10 +75,10 @@ Vector3 Ray::parametricVal(float t) {
    return Vector3(x, y, z);
 }
 
-////////////
-// Camera //
-////////////
-Camera::Camera(Vector3 viewPoint, Vector3 up, Vector3 viewDir, 
+/////////////////////////
+// Orthographic Camera //
+/////////////////////////
+OrthographicCamera::OrthographicCamera(Vector3 viewPoint, Vector3 up, Vector3 viewDir, 
    float tIn, float bIn, float lIn, float rIn, int nxIn, int nyIn) {
    w = viewDir * -1.0f;
    e = viewPoint;
@@ -83,9 +91,6 @@ Camera::Camera(Vector3 viewPoint, Vector3 up, Vector3 viewDir,
    ny = nyIn;
 }
 
-/////////////////////////
-// Orthographic Camera //
-/////////////////////////
 Ray OrthographicCamera::viewRay(int xi, int yi) {
    Vector3 origin = e + pixelToPos(xi, yi);
    Vector3 dir = w * -1.0;

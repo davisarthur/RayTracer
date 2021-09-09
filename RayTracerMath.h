@@ -1,3 +1,5 @@
+
+
 class Vector3 {
    public:
       float x, y, z;
@@ -11,6 +13,8 @@ class Vector3 {
       Vector3 operator-(const Vector3&) const;
       Vector3 operator*(const float) const;
       Vector3 operator/(const float) const;
+
+      static Vector3 cross(Vector3 v1, Vector3 v2);
 };
 
 class Ray {
@@ -26,18 +30,18 @@ class Camera {
       Vector3 w, e, u, v;
       float t, b, l, r;
       int nx, ny;
-
-      Camera(Vector3 viewPoint, Vector3 up, Vector3 viewDir, 
-         float tIn, float bIn, float lIn, float rIn, int nxIn, int nyIn);
-      virtual Ray viewRay(int nx, int ny);
+      
+      virtual Ray viewRay(int nx, int ny) = 0;
 
    private:
-      virtual Vector3 pixelToPos(int xi, int yi);
+      virtual Vector3 pixelToPos(int xi, int yi) = 0;
 };
 
 class OrthographicCamera : public Camera {
    public:
       Ray viewRay(int xi, int yi);
+      OrthographicCamera(Vector3 viewPoint, Vector3 up, Vector3 viewDir, 
+         float tIn, float bIn, float lIn, float rIn, int nxIn, int nyIn);
 
    private:
       Vector3 pixelToPos(int xi, int yi);
