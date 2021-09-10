@@ -116,6 +116,10 @@ Vector3 OrthographicCamera::pixelToPos(int xi, int yi) {
    return u * ucoord + v * vcoord;
 }
 
+Sphere::Sphere(float radiusIn, Vector3 centerIn) {
+   radius = radiusIn;
+   center = centerIn;
+}
 
 // using the notation on pg. 77 of Marschner and Shirley
 bool Sphere::hit(Ray r, float t0, float tf){

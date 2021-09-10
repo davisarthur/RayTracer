@@ -4,7 +4,7 @@
 #include <GLFW/glfw3.h>
 #include "RayTracerMath.h"
 
-
+#include <array>
 #include <iostream>
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
@@ -158,20 +158,47 @@ int main()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
     // Create the image (RGB Array) to be displayed
-
-    //////////////
-    // New code //
-    //////////////
-
     int width, height;
-    width = 8; height = 8; // keep it in powers of 2!
+    width = 256; height = 256; // keep it in powers of 2!
     unsigned char image[width*height*3];
+
+    // create camera
+    Vector3 viewDir(0.0, 0.0, 5.0), up(0.0, 4.0, 0.0), viewPoint(0.0, 0.0, 0.0);
+    float t = 10.0, b = -10.0, l = -10.0, r = 10.0;
+    OrthographicCamera cam(viewPoint, up, viewDir, t, b, l, r, width, height);
+
+    // make objects for the scene
+    float radius1 = 2.0, radius2 = 1.0;
+    Vector3 center1(0.0, 0.0, 5.0), center2(4.0, 3.0, 3.0);
+    Sphere sphere1(radius1, center1);
+    Sphere sphere2(radius2, center2);
+    std::array<Surface*, 2> surfaces;
+    surfaces[0] = &sphere1;
+    surfaces[1] = &sphere2;
     for(int i = 0; i < height; i++)
     {
         for (int j = 0; j < width; j++)
         {
             int idx = (i * width + j) * 3;
 
+            //////////////
+            // New code //
+            Ray viewRay = cam.viewRay(i, j);
+            bool hit = false;
+            for (int k = 0; k < surfaces.size(); k++) {
+                if (surfaces[k]->hit(viewRay, 0.001, 100.0)) {
+                    hit = true;
+                }
+            }
+            if (hit) {
+                image[idx] = (unsigned char) (255);
+            }
+            else {
+                image[idx] = 0;
+            }
+            image[idx+1] = 0;
+            image[idx+2] = 0;
+            //////////////
             /*
             image[idx] = (unsigned char) (255 * i*j/height/width)  ; //((i+j) % 2) * 255;
             image[idx+1] = 0;

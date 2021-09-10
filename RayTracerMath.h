@@ -41,9 +41,10 @@ class Camera {
 
 class OrthographicCamera : public Camera {
    public:
-      Ray viewRay(int xi, int yi);
       OrthographicCamera(Vector3 viewPoint, Vector3 up, Vector3 viewDir, 
          float tIn, float bIn, float lIn, float rIn, int nxIn, int nyIn);
+      Ray viewRay(int xi, int yi);
+      
 
    private:
       Vector3 pixelToPos(int xi, int yi);
@@ -59,7 +60,10 @@ class Sphere : public Surface {
       float radius;
       Vector3 center;
 
+      Sphere(float radiusIn, Vector3 centerIn);
       // t0 - minimum value of t that will be registered as a hit
       // tf - maximum value of t that wil be registered as a hit
       bool hit(Ray r, float t0, float tf);
+
+
 };
