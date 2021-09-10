@@ -1,5 +1,3 @@
-
-
 class Vector3 {
    public:
       float x, y, z;
@@ -50,9 +48,18 @@ class OrthographicCamera : public Camera {
       Vector3 pixelToPos(int xi, int yi);
 };
 
+class HitRecord {
+   public:
+      float t;
+      bool hit;
+
+      HitRecord();
+      HitRecord(float tIn);
+};
+
 class Surface {
    public:
-      virtual bool hit(Ray r, float t0, float tf) = 0;
+      virtual bool hit(Ray r, float t0, float tf, HitRecord& rec) = 0;
 };
 
 class Sphere : public Surface {
@@ -63,7 +70,5 @@ class Sphere : public Surface {
       Sphere(float radiusIn, Vector3 centerIn);
       // t0 - minimum value of t that will be registered as a hit
       // tf - maximum value of t that wil be registered as a hit
-      bool hit(Ray r, float t0, float tf);
-
-
+      bool hit(Ray r, float t0, float tf, HitRecord& rec);
 };

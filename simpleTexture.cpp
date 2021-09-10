@@ -166,6 +166,8 @@ int main()
     Vector3 viewDir(0.0, 0.0, 5.0), up(0.0, 4.0, 0.0), viewPoint(0.0, 0.0, 0.0);
     float t = 10.0, b = -10.0, l = -10.0, r = 10.0;
     OrthographicCamera cam(viewPoint, up, viewDir, t, b, l, r, width, height);
+    float tmin = 0.001;
+    float tmax = 100000;
 
     // make objects for the scene
     float radius1 = 2.0, radius2 = 1.0;
@@ -180,17 +182,16 @@ int main()
         for (int j = 0; j < width; j++)
         {
             int idx = (i * width + j) * 3;
-
-            //////////////
-            // New code //
             Ray viewRay = cam.viewRay(i, j);
-            bool hit = false;
+            Surface *hitSurface;
+            HitRecord rec;
+            t = tmax;
             for (int k = 0; k < surfaces.size(); k++) {
-                if (surfaces[k]->hit(viewRay, 0.001, 100.0)) {
-                    hit = true;
+                if (surfaces[k]->hit(viewRay, tmin, t, rec)) {
+                    hitSurface = surfaces[k];
                 }
             }
-            if (hit) {
+            if (rec.hit) {
                 image[idx] = (unsigned char) (255);
             }
             else {
@@ -198,12 +199,6 @@ int main()
             }
             image[idx+1] = 0;
             image[idx+2] = 0;
-            //////////////
-            /*
-            image[idx] = (unsigned char) (255 * i*j/height/width)  ; //((i+j) % 2) * 255;
-            image[idx+1] = 0;
-            image[idx+2] = 0;
-            */
         }
     }
 

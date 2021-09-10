@@ -94,7 +94,7 @@ OrthographicCamera::OrthographicCamera(Vector3 viewPoint, Vector3 up, Vector3 vi
    e = viewPoint;
    v = up;
    v = v.normalized();
-   u = Vector3::cross(v, w);
+   u = Vector3::cross(w, v);
    u = u.normalized();
    t = tIn;
    b = bIn;
@@ -116,20 +116,35 @@ Vector3 OrthographicCamera::pixelToPos(int xi, int yi) {
    return u * ucoord + v * vcoord;
 }
 
+////////////
+// Sphere //
+////////////
 Sphere::Sphere(float radiusIn, Vector3 centerIn) {
    radius = radiusIn;
    center = centerIn;
 }
 
-// using the notation on pg. 77 of Marschner and Shirley
-bool Sphere::hit(Ray r, float t0, float tf){
+bool Sphere::hit(Ray r, float t0, float tf, HitRecord& rec) {
+   // using the mathematical notation from pg. 77 of Marschner and Shirley
    Vector3 d = r.dir, e = r.origin, c = center;
    float R = radius;
    float discriminant = pow(Vector3::dot(d, (e - c)), 2.0) 
       - Vector3::dot(d, d) * (Vector3::dot((e - c), (e - c)) - pow(R, 2.0));
+   bool hit = false;
    if (discriminant > 0.0) {
-      return true;
+      hit = true;
+      float t = (Vector3::dot(d * -1.0, (e - c)) - discriminant) / Vector3::dot(d, d);
+      rec = HitRecord(t);
    }
-   return false;
+   return hit;
 }
 
+HitRecord::HitRecord() {
+   t = -1.0;
+   hit = false;
+}
+
+HitRecord::HitRecord(float tIn) {
+   t = tIn;
+   hit = true;
+}
