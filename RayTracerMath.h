@@ -14,7 +14,9 @@ class Vector3 {
       Vector3 operator-(const Vector3&) const;
       Vector3 operator*(const float) const;
       Vector3 operator/(const float) const; 
+
       static Vector3 cross(Vector3 v1, Vector3 v2);   
+      static float dot(Vector3 v1, Vector3 v2);  
 };
 
 class Ray {
@@ -45,4 +47,19 @@ class OrthographicCamera : public Camera {
 
    private:
       Vector3 pixelToPos(int xi, int yi);
+};
+
+class Surface {
+   public:
+      virtual bool hit(Ray r, float t0, float tf) = 0;
+};
+
+class Sphere : public Surface {
+   public:
+      float radius;
+      Vector3 center;
+
+      // t0 - minimum value of t that will be registered as a hit
+      // tf - maximum value of t that wil be registered as a hit
+      bool hit(Ray r, float t0, float tf);
 };

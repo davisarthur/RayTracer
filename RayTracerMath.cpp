@@ -65,6 +65,10 @@ Vector3 Vector3::cross(Vector3 v1, Vector3 v2) {
    return Vector3(resX, resY, resZ);
 }
 
+float Vector3::dot(Vector3 v1, Vector3 v2) {
+   return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z; 
+}
+
 /////////
 // Ray //
 /////////
@@ -110,5 +114,18 @@ Vector3 OrthographicCamera::pixelToPos(int xi, int yi) {
    float ucoord = l + (r - l) * (xi + 0.5) / nx;
    float vcoord = b + (t - b) * (yi + 0.5) / ny;
    return u * ucoord + v * vcoord;
+}
+
+
+// using the notation on pg. 77 of Marschner and Shirley
+bool Sphere::hit(Ray r, float t0, float tf){
+   Vector3 d = r.dir, e = r.origin, c = center;
+   float R = radius;
+   float discriminant = pow(Vector3::dot(d, (e - c)), 2.0) 
+      - Vector3::dot(d, d) * (Vector3::dot((e - c), (e - c)) - pow(R, 2.0));
+   if (discriminant > 0.0) {
+      return true;
+   }
+   return false;
 }
 

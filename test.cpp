@@ -15,14 +15,28 @@ int main() {
    Vector3 p6 = p4.normalized();
    std::cout << p6.x << ", " << p6.y << ", " << p6.z << std::endl;
    
-   std::cout << std::endl;
 
    // Test Ray
+   std::cout << std::endl << "Ray" << std::endl;
    Vector3 o(0.0, 0.0, 0.0);
    Vector3 dir(1.0, 0.0, 0.0);
-   Ray r(o, dir);
-   Vector3 paramVal = r.val(1);
+   Ray ray(o, dir);
+   Vector3 paramVal = ray.val(1);
    std::cout << paramVal.x << ", " << paramVal.y << ", " << paramVal.z << std::endl;
 
-   
+   // Test Camera
+   std::cout << std::endl << "Camera" << std::endl;
+   Vector3 viewDir(0.0, 0.0, 5.0), up(0.0, 4.0, 0.0), viewPoint = o;
+   float t = 10.0, b = -10.0, l = -10.0, r = 10.0;
+   int nx = 3, ny = 3;
+   OrthographicCamera cam(o, up, viewDir, t, b, l, r, nx, ny);
+   for (int i = 0; i < nx; i++) {
+      for (int j = 0; j < ny; j++) {
+         Ray ijR = cam.viewRay(i, j);
+         Vector3 ijDir = ijR.dir;
+         Vector3 ijOrigin = ijR.origin;
+         std::cout << "Direction: (" << ijDir.x << ", " << ijDir.y << ", " << ijDir.z << ")" << std::endl;
+         std::cout << "Origin: (" << ijOrigin.x << ", " << ijOrigin.y << ", " << ijOrigin.z << ")" << std::endl << std::endl;
+      }
+   }
 }

@@ -2,6 +2,7 @@
 #include <GL/glew.h>
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
+#include "RayTracerMath.h"
 
 
 #include <iostream>
@@ -157,6 +158,11 @@ int main()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
     // Create the image (RGB Array) to be displayed
+
+    //////////////
+    // New code //
+    //////////////
+
     int width, height;
     width = 8; height = 8; // keep it in powers of 2!
     unsigned char image[width*height*3];
@@ -165,9 +171,12 @@ int main()
         for (int j = 0; j < width; j++)
         {
             int idx = (i * width + j) * 3;
+
+            /*
             image[idx] = (unsigned char) (255 * i*j/height/width)  ; //((i+j) % 2) * 255;
             image[idx+1] = 0;
             image[idx+2] = 0;
+            */
         }
     }
 
