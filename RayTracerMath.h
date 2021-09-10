@@ -8,6 +8,7 @@ class Vector3 {
       Vector3(float xIn, float yIn, float zIn);
 
       float magnitude();
+      Vector3 normalized();
 
       Vector3 operator+(const Vector3&) const;
       Vector3 operator-(const Vector3&) const;
@@ -21,7 +22,7 @@ class Ray {
       Vector3 origin, dir;
 
       Ray(Vector3 originIn, Vector3 dirIn);
-      Vector3 parametricVal(float t);
+      Vector3 val(float t);
 };
 
 class Camera {

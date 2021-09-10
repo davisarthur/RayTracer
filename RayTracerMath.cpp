@@ -21,6 +21,11 @@ float Vector3::magnitude() {
    return pow(pow(x, 2.0) + pow(y, 2.0) + pow(z, 2.0), 0.5);
 }
 
+Vector3 Vector3::normalized() {
+   float mag = magnitude();
+   return Vector3(x / mag, y / mag, z / mag);
+}
+
 Vector3 Vector3::operator+(const Vector3& v) const {
    Vector3 result;
    result.x = this->x + v.x;
@@ -68,7 +73,7 @@ Ray::Ray(Vector3 originIn, Vector3 dirIn) {
    dir = dirIn;
 }
 
-Vector3 Ray::parametricVal(float t) {
+Vector3 Ray::val(float t) {
    float x = origin.x + dir.x * t;
    float y = origin.y + dir.y * t;
    float z = origin.z + dir.z * t;
@@ -81,8 +86,12 @@ Vector3 Ray::parametricVal(float t) {
 OrthographicCamera::OrthographicCamera(Vector3 viewPoint, Vector3 up, Vector3 viewDir, 
    float tIn, float bIn, float lIn, float rIn, int nxIn, int nyIn) {
    w = viewDir * -1.0f;
+   w = w.normalized();
    e = viewPoint;
    v = up;
+   v = v.normalized();
+   u = Vector3::cross(v, w);
+   u = u.normalized();
    t = tIn;
    b = bIn;
    l = lIn;
