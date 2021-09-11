@@ -189,6 +189,7 @@ int main()
             for (int k = 0; k < surfaces.size(); k++) {
                 if (surfaces[k]->hit(viewRay, tmin, t, rec)) {
                     hitSurface = surfaces[k];
+                    t = rec.t;
                 }
             }
             if (rec.hit) {

@@ -116,12 +116,32 @@ Vector3 OrthographicCamera::pixelToPos(int xi, int yi) {
    return u * ucoord + v * vcoord;
 }
 
+///////////
+// Color //
+///////////
+Color::Color(int redIn, int greenIn, int blueIn) {
+   red = (unsigned char) redIn;
+   green = (unsigned char) greenIn;
+   blue = (unsigned char) blueIn;
+}
+
+//////////////
+// Material //
+//////////////
+Material::Material(Color colorIn, float kdIn, float ksIn, float kaIn) {
+   color = colorIn;
+   kd = kdIn;
+   ks = ksIn;
+   ka = kaIn;
+}
+
 ////////////
 // Sphere //
 ////////////
-Sphere::Sphere(float radiusIn, Vector3 centerIn) {
+Sphere::Sphere(float radiusIn, Vector3 centerIn, Material materialIn) {
    radius = radiusIn;
    center = centerIn;
+   material = materialIn;
 }
 
 bool Sphere::hit(Ray r, float t0, float tf, HitRecord& rec) {
@@ -139,6 +159,9 @@ bool Sphere::hit(Ray r, float t0, float tf, HitRecord& rec) {
    return hit;
 }
 
+////////////////
+// Hit Record //
+////////////////
 HitRecord::HitRecord() {
    t = -1.0;
    hit = false;

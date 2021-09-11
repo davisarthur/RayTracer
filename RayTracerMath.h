@@ -57,8 +57,28 @@ class HitRecord {
       HitRecord(float tIn);
 };
 
+class Color {
+   public:
+      unsigned char red;
+      unsigned char green;
+      unsigned char blue;
+
+      Color(int redIn, int greenIn, int blueIn);
+};
+
+class Material {
+   public:
+      Color color;
+      float kd; // diffuse coefficient
+      float ks; // specular coefficient
+      float ka; // ambient coefficient
+
+      Material(Color colorIn, float kdIn, float ksIn, float kaIn);
+};
+
 class Surface {
    public:
+      Material material;
       virtual bool hit(Ray r, float t0, float tf, HitRecord& rec) = 0;
 };
 
@@ -67,7 +87,7 @@ class Sphere : public Surface {
       float radius;
       Vector3 center;
 
-      Sphere(float radiusIn, Vector3 centerIn);
+      Sphere(float radiusIn, Vector3 centerIn, Material materialIn);
       // t0 - minimum value of t that will be registered as a hit
       // tf - maximum value of t that wil be registered as a hit
       bool hit(Ray r, float t0, float tf, HitRecord& rec);
