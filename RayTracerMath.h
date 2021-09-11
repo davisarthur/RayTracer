@@ -82,6 +82,7 @@ class Surface {
    public:
       Material material;
       virtual bool hit(Ray r, float t0, float tf, HitRecord& rec) = 0;
+      virtual Vector3 normal(Vector3 pos) = 0;
 
       Surface();
       Surface(Material materialIn);
@@ -96,4 +97,13 @@ class Sphere : public Surface {
       // t0 - minimum value of t that will be registered as a hit
       // tf - maximum value of t that wil be registered as a hit
       bool hit(Ray r, float t0, float tf, HitRecord& rec);
+      Vector3 normal(Vector3 pos);
+};
+
+class DirectionalLight {
+   public:
+      float intensity;
+      Vector3 dir;
+
+      DirectionalLight(float intensityIn, Vector3 dirIn);
 };

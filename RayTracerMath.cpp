@@ -183,6 +183,11 @@ bool Sphere::hit(Ray r, float t0, float tf, HitRecord& rec) {
    return hit;
 }
 
+Vector3 Sphere::normal(Vector3 pos) {
+   Vector3 normal = (pos - center) * 2.0;
+   return normal.normalized();
+}
+
 ////////////////
 // Hit Record //
 ////////////////
@@ -194,4 +199,12 @@ HitRecord::HitRecord() {
 HitRecord::HitRecord(float tIn) {
    t = tIn;
    hit = true;
+}
+
+///////////////////////
+// Directional Light //
+///////////////////////
+DirectionalLight::DirectionalLight(float intensityIn, Vector3 dirIn) {
+   intensity = intensityIn;
+   dir = dirIn.normalized();
 }

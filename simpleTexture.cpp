@@ -5,7 +5,9 @@
 #include "RayTracerMath.h"
 
 #include <array>
+#include <algorithm>
 #include <iostream>
+
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow *window);
@@ -162,6 +164,11 @@ int main()
     width = 256; height = 256; // keep it in powers of 2!
     unsigned char image[width*height*3];
 
+    // create light source
+    float intensity = 1.0;
+    Vector3 lightDir(1.0, 0.0, -1.0);
+    DirectionalLight lightSource(intensity, lightDir);
+    
     // create camera
     Vector3 viewDir(0.0, 0.0, 5.0), up(0.0, 4.0, 0.0), viewPoint(0.0, 0.0, 0.0);
     float t = 10.0, b = -10.0, l = -10.0, r = 10.0;
@@ -170,7 +177,7 @@ int main()
     float tmax = 100000;
 
     // make objects (surfaces) for the scene
-    Color color1(255, 0, 0), color2(128, 0, 128);
+    Color color1(255, 0, 0), color2(255, 0, 128);
     Material material1(color1, 1.0, 1.0, 1.0), material2(color2, 1.0, 1.0, 1.0);
     float radius1 = 2.0, radius2 = 1.0;
     Vector3 center1(0.0, 0.0, 5.0), center2(4.0, 3.0, 3.0);
@@ -196,16 +203,17 @@ int main()
                 }
             }
             if (rec.hit) {
-                image[idx] = hitSurface->material.color.red;
-                image[idx+1] = hitSurface->material.color.green;
-                image[idx+2] = hitSurface->material.color.blue;
+                Vector3 normal = hitSurface->normal(viewRay.val(t));
+                float l = hitSurface->material.kd * lightSource.intensity * std::max(0.0f, Vector3::dot(normal, lightSource.dir));
+                image[idx] = (int) (l * hitSurface->material.color.red);
+                image[idx+1] = (int) (l * hitSurface->material.color.green);
+                image[idx+2] = (int) (l * hitSurface->material.color.blue);
             }
             else {
-                image[idx] = 0;
-                image[idx+1] = 0;
-                image[idx+2] = 0;
+                image[idx] = (unsigned char) 100;
+                image[idx+1] = (unsigned char) 100;
+                image[idx+2] = (unsigned char) 100;
             }
-            
         }
     }
 
