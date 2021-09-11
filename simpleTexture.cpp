@@ -4,6 +4,7 @@
 #include <GLFW/glfw3.h>
 #include "RayTracerMath.h"
 
+#include <math.h>
 #include <array>
 #include <algorithm>
 #include <iostream>
@@ -161,12 +162,14 @@ int main()
 
     // Create the image (RGB Array) to be displayed
     int width, height;
-    width = 256; height = 256; // keep it in powers of 2!
+    width = 512; height = 512; // keep it in powers of 2!
     unsigned char image[width*height*3];
 
     // create light source
+    float phongExp = 2.0;
     float intensity = 1.0;
-    Vector3 lightDir(1.0, 0.0, -1.0);
+    float ambientIntensity = 1.0;
+    Vector3 lightDir(1.0, -0.5, -10.0);
     DirectionalLight lightSource(intensity, lightDir);
     
     // create camera
@@ -177,8 +180,8 @@ int main()
     float tmax = 100000;
 
     // make objects (surfaces) for the scene
-    Color color1(255, 0, 0), color2(255, 0, 128);
-    Material material1(color1, 1.0, 1.0, 1.0), material2(color2, 1.0, 1.0, 1.0);
+    Color color1(0, 255, 0), color2(200, 0, 128);
+    Material material1(color1, 1.0, 3.0, 1.0), material2(color2, 1.0, 1.0, 1.0);
     float radius1 = 2.0, radius2 = 1.0;
     Vector3 center1(0.0, 0.0, 5.0), center2(4.0, 3.0, 3.0);
     Sphere sphere1(radius1, center1, material1);
@@ -204,7 +207,12 @@ int main()
             }
             if (rec.hit) {
                 Vector3 normal = hitSurface->normal(viewRay.val(t));
-                float l = hitSurface->material.kd * lightSource.intensity * std::max(0.0f, Vector3::dot(normal, lightSource.dir));
+                Vector3 h = viewRay.dir + lightSource.dir;
+                h = h.normalized();
+                float d = hitSurface->material.kd * lightSource.intensity * std::max(0.0f, Vector3::dot(normal, lightSource.dir));
+                float s = hitSurface->material.ks * lightSource.intensity * pow(std::max(0.0f, Vector3::dot(normal, h)), phongExp);
+                float a = hitSurface->material.ka * ambientIntensity;
+                float l = (d + s) / (lightSource.intensity * (hitSurface->material.kd + hitSurface->material.ks) + a);
                 image[idx] = (int) (l * hitSurface->material.color.red);
                 image[idx+1] = (int) (l * hitSurface->material.color.green);
                 image[idx+2] = (int) (l * hitSurface->material.color.blue);
