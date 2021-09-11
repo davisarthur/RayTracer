@@ -169,14 +169,17 @@ int main()
     float tmin = 0.001;
     float tmax = 100000;
 
-    // make objects for the scene
+    // make objects (surfaces) for the scene
+    Color color1(255, 0, 0), color2(128, 0, 128);
+    Material material1(color1, 1.0, 1.0, 1.0), material2(color2, 1.0, 1.0, 1.0);
     float radius1 = 2.0, radius2 = 1.0;
     Vector3 center1(0.0, 0.0, 5.0), center2(4.0, 3.0, 3.0);
-    Sphere sphere1(radius1, center1);
-    Sphere sphere2(radius2, center2);
+    Sphere sphere1(radius1, center1, material1);
+    Sphere sphere2(radius2, center2, material2);
     std::array<Surface*, 2> surfaces;
     surfaces[0] = &sphere1;
     surfaces[1] = &sphere2;
+
     for(int i = 0; i < height; i++)
     {
         for (int j = 0; j < width; j++)
@@ -193,13 +196,16 @@ int main()
                 }
             }
             if (rec.hit) {
-                image[idx] = (unsigned char) (255);
+                image[idx] = hitSurface->material.color.red;
+                image[idx+1] = hitSurface->material.color.green;
+                image[idx+2] = hitSurface->material.color.blue;
             }
             else {
                 image[idx] = 0;
+                image[idx+1] = 0;
+                image[idx+2] = 0;
             }
-            image[idx+1] = 0;
-            image[idx+2] = 0;
+            
         }
     }
 

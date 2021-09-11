@@ -119,6 +119,12 @@ Vector3 OrthographicCamera::pixelToPos(int xi, int yi) {
 ///////////
 // Color //
 ///////////
+Color::Color() {
+   red = (unsigned char) 0;
+   green = (unsigned char) 0;
+   blue = (unsigned char) 0;
+}
+
 Color::Color(int redIn, int greenIn, int blueIn) {
    red = (unsigned char) redIn;
    green = (unsigned char) greenIn;
@@ -128,11 +134,29 @@ Color::Color(int redIn, int greenIn, int blueIn) {
 //////////////
 // Material //
 //////////////
+Material::Material() {
+   color = Color(0, 0, 0);
+   kd = 0.0;
+   ks = 0.0;
+   ka = 0.0;
+}
+
 Material::Material(Color colorIn, float kdIn, float ksIn, float kaIn) {
    color = colorIn;
    kd = kdIn;
    ks = ksIn;
    ka = kaIn;
+}
+
+/////////////
+// Surface //
+/////////////
+Surface::Surface() {
+   material = Material();
+}
+
+Surface::Surface(Material materialIn) {
+   material = materialIn;
 }
 
 ////////////

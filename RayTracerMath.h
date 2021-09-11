@@ -63,6 +63,7 @@ class Color {
       unsigned char green;
       unsigned char blue;
 
+      Color();
       Color(int redIn, int greenIn, int blueIn);
 };
 
@@ -73,6 +74,7 @@ class Material {
       float ks; // specular coefficient
       float ka; // ambient coefficient
 
+      Material();
       Material(Color colorIn, float kdIn, float ksIn, float kaIn);
 };
 
@@ -80,6 +82,9 @@ class Surface {
    public:
       Material material;
       virtual bool hit(Ray r, float t0, float tf, HitRecord& rec) = 0;
+
+      Surface();
+      Surface(Material materialIn);
 };
 
 class Sphere : public Surface {
