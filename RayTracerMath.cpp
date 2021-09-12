@@ -191,35 +191,40 @@ Vector3 Sphere::normal(Vector3 pos) {
 //////////////
 // Triangle //
 //////////////
-Triangle::Triangle(Vector3 aIn, Vector3 bIn, Vector3 cIn) {
+Triangle::Triangle(Vector3 aIn, Vector3 bIn, Vector3 cIn, Material materialIn) {
    a = aIn;
    b = bIn;
    c = cIn;
-   normal = Vector3::cross(a - b, c - b);
+   n = Vector3::cross(a - b, c - b);
+   material = materialIn;
 }
 
 bool Triangle::hit(Ray r, float t0, float tf, HitRecord& rec) {
    // make sure the ray is not parallel to the triangle's plane
-   if (std::abs(Vector3::dot(r.dir, normal)) < 0.000001) {
+   if (std::abs(Vector3::dot(r.dir, n)) < 0.000001) {
       return false;
    }
    
    // determine intersection point
-   float t = Vector3::dot((a - r.origin), normal) / Vector3::dot(r.dir, normal);
+   float t = Vector3::dot((a - r.origin), n) / Vector3::dot(r.dir, n);
    Vector3 x = r.val(t);
 
    // see if intersection point is within the triangle
-   if (Vector3::dot(Vector3::cross((b - a), (x - a)), normal) < 0.0) {
+   if (Vector3::dot(Vector3::cross((b - a), (x - a)), n) < 0.0) {
       return false;
    }
-   if (Vector3::dot(Vector3::cross((c - b), (x - b)), normal) < 0.0) {
+   if (Vector3::dot(Vector3::cross((c - b), (x - b)), n) < 0.0) {
       return false;
    }
-   if (Vector3::dot(Vector3::cross((a - c), (x - c)), normal) < 0.0) {
+   if (Vector3::dot(Vector3::cross((a - c), (x - c)), n) < 0.0) {
       return false;
    }
    rec = HitRecord(t);
    return true;
+}
+
+Vector3 Triangle::normal(Vector3 pos) {
+   return n;
 }
 
 ////////////////

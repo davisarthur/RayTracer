@@ -103,10 +103,11 @@ class Triangle : public Surface {
       Vector3 a;
       Vector3 b;
       Vector3 c;
-      Vector3 normal;
+      Vector3 n;
 
-      Triangle(Vector3 aIn, Vector3 bIn, Vector3 cIn);
+      Triangle(Vector3 aIn, Vector3 bIn, Vector3 cIn, Material materialIn);
       bool hit(Ray r, float t0, float tf, HitRecord& rec);
+      Vector3 normal(Vector3 pos);
 };
 
 class DirectionalLight {

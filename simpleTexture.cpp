@@ -179,16 +179,22 @@ int main()
     float tmin = 0.001;
     float tmax = 100000;
 
-    // make objects (surfaces) for the scene
+    // make spheres for the scene
     Color color1(0, 255, 0), color2(200, 0, 128);
     Material material1(color1, 1.0, 3.0, 1.0), material2(color2, 1.0, 1.0, 1.0);
     float radius1 = 3.0, radius2 = 1.0;
     Vector3 center1(0.0, 0.0, -5.0), center2(2.0, 0.0, -2.0);
     Sphere sphere1(radius1, center1, material1);
     Sphere sphere2(radius2, center2, material2);
-    std::array<Surface*, 2> surfaces;
+    
+    // make tetrahedron
+    Vector3 ta(-2.0, 0.0, 0.0), tb(-3.0, 1.0, 0.0), tc(-8.0, 0.0, 0.0);
+    Triangle triangle1(ta, tb, tc, material1);
+    
+    std::array<Surface*, 3> surfaces;
     surfaces[0] = &sphere1;
     surfaces[1] = &sphere2;
+    surfaces[2] = &triangle1;
 
     for(int i = 0; i < height; i++)
     {
@@ -203,6 +209,9 @@ int main()
                 if (surfaces[k]->hit(viewRay, tmin, t, rec)) {
                     hitSurface = surfaces[k];
                     t = rec.t;
+                    if (k == 2) {
+                        std::cout << "triangle hit" << std::endl;
+                    }
                 }
             }
             if (rec.hit) {
