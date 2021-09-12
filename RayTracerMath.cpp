@@ -1,6 +1,7 @@
 #include <math.h>
 #include "RayTracerMath.h"
 #include <iostream>
+#include <cmath>
 
 /////////////
 // Vector3 //
@@ -92,10 +93,9 @@ OrthographicCamera::OrthographicCamera(Vector3 viewPoint, Vector3 up, Vector3 vi
    w = viewDir * -1.0f;
    w = w.normalized();
    e = viewPoint;
-   v = up;
-   v = v.normalized();
-   u = Vector3::cross(w, v);
+   u = Vector3::cross(up, w);
    u = u.normalized();
+   v = Vector3::cross(w, u);
    t = tIn;
    b = bIn;
    l = lIn;
@@ -186,6 +186,40 @@ bool Sphere::hit(Ray r, float t0, float tf, HitRecord& rec) {
 Vector3 Sphere::normal(Vector3 pos) {
    Vector3 normal = (pos - center) * 2.0;
    return normal.normalized();
+}
+
+//////////////
+// Triangle //
+//////////////
+Triangle::Triangle(Vector3 aIn, Vector3 bIn, Vector3 cIn) {
+   a = aIn;
+   b = bIn;
+   c = cIn;
+   normal = Vector3::cross(a - b, c - b);
+}
+
+bool Triangle::hit(Ray r, float t0, float tf, HitRecord& rec) {
+   // make sure the ray is not parallel to the triangle's plane
+   if (std::abs(Vector3::dot(r.dir, normal)) < 0.000001) {
+      return false;
+   }
+   
+   // determine intersection point
+   float t = Vector3::dot((a - r.origin), normal) / Vector3::dot(r.dir, normal);
+   Vector3 x = r.val(t);
+
+   // see if intersection point is within the triangle
+   if (Vector3::dot(Vector3::cross((b - a), (x - a)), normal) < 0.0) {
+      return false;
+   }
+   if (Vector3::dot(Vector3::cross((c - b), (x - b)), normal) < 0.0) {
+      return false;
+   }
+   if (Vector3::dot(Vector3::cross((a - c), (x - c)), normal) < 0.0) {
+      return false;
+   }
+   rec = HitRecord(t);
+   return true;
 }
 
 ////////////////

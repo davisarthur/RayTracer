@@ -94,10 +94,19 @@ class Sphere : public Surface {
       Vector3 center;
 
       Sphere(float radiusIn, Vector3 centerIn, Material materialIn);
-      // t0 - minimum value of t that will be registered as a hit
-      // tf - maximum value of t that wil be registered as a hit
       bool hit(Ray r, float t0, float tf, HitRecord& rec);
       Vector3 normal(Vector3 pos);
+};
+
+class Triangle : public Surface {
+   public:
+      Vector3 a;
+      Vector3 b;
+      Vector3 c;
+      Vector3 normal;
+
+      Triangle(Vector3 aIn, Vector3 bIn, Vector3 cIn);
+      bool hit(Ray r, float t0, float tf, HitRecord& rec);
 };
 
 class DirectionalLight {

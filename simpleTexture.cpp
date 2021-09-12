@@ -169,11 +169,11 @@ int main()
     float phongExp = 2.0;
     float intensity = 1.0;
     float ambientIntensity = 1.0;
-    Vector3 lightDir(1.0, -0.5, -10.0);
+    Vector3 lightDir(0.5, 4.0, 5.0);
     DirectionalLight lightSource(intensity, lightDir);
     
     // create camera
-    Vector3 viewDir(0.0, 0.0, 5.0), up(0.0, 4.0, 0.0), viewPoint(0.0, 0.0, 0.0);
+    Vector3 viewDir(0.0, -0.2, -1.0), up(0.0, 1.0, 0.0), viewPoint(0.0, 2.0, 10.0);
     float t = 10.0, b = -10.0, l = -10.0, r = 10.0;
     OrthographicCamera cam(viewPoint, up, viewDir, t, b, l, r, width, height);
     float tmin = 0.001;
@@ -182,8 +182,8 @@ int main()
     // make objects (surfaces) for the scene
     Color color1(0, 255, 0), color2(200, 0, 128);
     Material material1(color1, 1.0, 3.0, 1.0), material2(color2, 1.0, 1.0, 1.0);
-    float radius1 = 2.0, radius2 = 1.0;
-    Vector3 center1(0.0, 0.0, 5.0), center2(4.0, 3.0, 3.0);
+    float radius1 = 3.0, radius2 = 1.0;
+    Vector3 center1(0.0, 0.0, -5.0), center2(2.0, 0.0, -2.0);
     Sphere sphere1(radius1, center1, material1);
     Sphere sphere2(radius2, center2, material2);
     std::array<Surface*, 2> surfaces;
@@ -195,7 +195,7 @@ int main()
         for (int j = 0; j < width; j++)
         {
             int idx = (i * width + j) * 3;
-            Ray viewRay = cam.viewRay(i, j);
+            Ray viewRay = cam.viewRay(j, i);
             Surface *hitSurface;
             HitRecord rec;
             t = tmax;
