@@ -2,6 +2,7 @@
 #include <iostream>
 
 int main() {
+   /*
    // Test Vector3
    Vector3 p1(1.0, 2.0, 3.0);
    std::cout << p1.magnitude() << std::endl;
@@ -14,7 +15,6 @@ int main() {
    std::cout << p5.x << ", " << p5.y << ", " << p5.z << std::endl;
    Vector3 p6 = p4.normalized();
    std::cout << p6.x << ", " << p6.y << ", " << p6.z << std::endl;
-   
 
    // Test Ray
    std::cout << std::endl << "Ray" << std::endl;
@@ -39,4 +39,14 @@ int main() {
          std::cout << "Origin: (" << ijOrigin.x << ", " << ijOrigin.y << ", " << ijOrigin.z << ")" << std::endl << std::endl;
       }
    }
+   */
+   Color color1(0, 255, 0);
+   Material material1(color1, 1.0, 3.0, 1.0);
+   Vector3 ta(10.0, 0.0, 0.0), tb(0.0, 10.0, 0.0), tc(-10.0, 0.0, 0.0);
+   Triangle triangle1(ta, tb, tc, material1);
+   Vector3 origin(0.0, 5.0, 5.0);
+   Vector3 dir(0.0, 0.0, -1.0);
+   Ray r(origin, dir);
+   HitRecord rec;
+   std::cout << triangle1.hit(r, 0.0001, 1000000.0, rec) << std::endl;
 }

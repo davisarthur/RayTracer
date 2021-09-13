@@ -195,7 +195,7 @@ Triangle::Triangle(Vector3 aIn, Vector3 bIn, Vector3 cIn, Material materialIn) {
    a = aIn;
    b = bIn;
    c = cIn;
-   n = Vector3::cross(a - b, c - b);
+   n = Vector3::cross(b - a, c - b).normalized();
    material = materialIn;
 }
 
