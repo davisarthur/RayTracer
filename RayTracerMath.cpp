@@ -2,6 +2,7 @@
 #include "RayTracerMath.h"
 #include <iostream>
 #include <cmath>
+#include <vector>
 
 /////////////
 // Vector3 //
@@ -138,12 +139,16 @@ Material::Material() {
    surfaceColor = Color(0, 0, 0);
    specularColor = Color(0, 0, 0);
    ambientColor = Color(0, 0, 0);
+   ambientIntensity = 1.0;
+   phongExp = 100.0;
 }
 
-Material::Material(Color surfaceColorIn, Color specularColorIn, Color ambientColorIn) {
+Material::Material(Color surfaceColorIn, Color specularColorIn, Color ambientColorIn, float ambientIntensityIn, float phongExpIn) {
    surfaceColor = surfaceColorIn;
    specularColor = specularColorIn;
    ambientColor = ambientColorIn;
+   ambientIntensity = ambientIntensityIn;
+   phongExp = phongExpIn;
 }
 
 /////////////
@@ -281,39 +286,30 @@ DirectionalLight::DirectionalLight(float intensityIn, Vector3 dirIn) {
    dir = dirIn.normalized();
 }
 
-/*
-Color rayColor(Ray r, float t0, float tf, std::array<Surface*> surfaces) {
+Color rayColor(Ray r, float t0, float tf, std::vector<Surface*> surfaces, DirectionalLight lightSource) {
    Surface *hitSurface;
    HitRecord rec;
    float t = tf;
    for (int k = 0; k < surfaces.size(); k++) {
-      if (surfaces[k]->hit(viewRay, tmin, t, rec)) {
+      if (surfaces.at(k)->hit(r, t0, t, rec)) {
          hitSurface = surfaces[k];
          t = rec.t;
       }
    }
-            if (rec.hit) {
-                Vector3 normal = hitSurface->normal(viewRay.val(t));
-                Vector3 h = viewRay.dir * -1.0 + lightSource.dir;
-                h = h.normalized();
-                float d = lightSource.intensity * std::max(0.0f, Vector3::dot(normal, lightSource.dir));
-                float s = lightSource.intensity * pow(std::max(0.0f, Vector3::dot(normal, h)), phongExp);
-                float a = ambientIntensity;
+   if (rec.hit) {
+      Vector3 normal = hitSurface->normal(r.val(t));
+      Vector3 h = (r.dir * -1.0 + lightSource.dir).normalized();
+      float d = lightSource.intensity * std::max(0.0f, Vector3::dot(normal, lightSource.dir));
+      float s = lightSource.intensity * pow(std::max(0.0f, Vector3::dot(normal, h)), hitSurface->material.phongExp);
+      float a = hitSurface->material.ambientIntensity;
                 
-                float lR = (d * hitSurface->material.surfaceColor.red + s * hitSurface->material.specularColor.red
-                    + a * hitSurface->material.ambientColor.red) / 3.0;
-                image[idx] = (int) lR;
-                float lG = (d * hitSurface->material.surfaceColor.green + s * hitSurface->material.specularColor.green
-                    + a * hitSurface->material.ambientColor.green) / 3.0;
-                image[idx+1] = (int) lG;
-                float lB = (d * hitSurface->material.surfaceColor.blue + s * hitSurface->material.specularColor.blue
-                    + a * hitSurface->material.ambientColor.blue) / 3.0;
-                image[idx+2] = (int) lB;
-            }
-            else {
-                image[idx] = (unsigned char) 0;
-                image[idx+1] = (unsigned char) 0;
-                image[idx+2] = (unsigned char) 0;
-            }
+      float lR = (d * hitSurface->material.surfaceColor.red + s * hitSurface->material.specularColor.red
+         + a * hitSurface->material.ambientColor.red) / (2.0 + hitSurface->material.ambientIntensity);
+      float lG = (d * hitSurface->material.surfaceColor.green + s * hitSurface->material.specularColor.green
+         + a * hitSurface->material.ambientColor.green) / (2.0 + hitSurface->material.ambientIntensity);
+      float lB = (d * hitSurface->material.surfaceColor.blue + s * hitSurface->material.specularColor.blue
+         + a * hitSurface->material.ambientColor.blue) / (2.0 + hitSurface->material.ambientIntensity);
+      return Color(lR, lG, lB);
+   }
+   return Color(0, 0, 0);
 }
-*/

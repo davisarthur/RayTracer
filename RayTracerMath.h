@@ -1,3 +1,5 @@
+#include <vector>
+
 class Vector3 {
    public:
       float x, y, z;
@@ -72,9 +74,11 @@ class Material {
       Color surfaceColor;
       Color specularColor;
       Color ambientColor;
+      float ambientIntensity;
+      float phongExp; 
 
       Material();
-      Material(Color surfaceColorIn, Color specularColorIn, Color ambientColorIn);
+      Material(Color surfaceColorIn, Color specularColorIn, Color ambientColorIn, float ambientIntensityIn, float phongExpIn);
 };
 
 class Surface {
@@ -127,4 +131,4 @@ class DirectionalLight {
       DirectionalLight(float intensityIn, Vector3 dirIn);
 };
 
-Color rayColor(Ray r, float t0, float tf);
+Color rayColor(Ray r, float t0, float tf, std::vector<Surface*> surfaces, DirectionalLight lightSource);

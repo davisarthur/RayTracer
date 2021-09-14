@@ -182,22 +182,25 @@ int main()
 
     // make spheres for the scene
     Color red(255, 0, 0), green(0, 255, 0), blue(0, 0, 255), white(255, 255, 255), black(0, 0, 0);
-    Material material1(red, white, red), material2(green, white, green), material3(blue, white, blue), material4(white, white, white);
+    Material sphere1Mat(red, white, red, ambientIntensity, phongExp);
+    Material sphere2Mat(green, white, green, ambientIntensity, phongExp); 
+    Material tetraMat(blue, white, blue, ambientIntensity, phongExp);
+    Material planeMat(white, white, white, ambientIntensity, phongExp);
     float radius1 = 3.0, radius2 = 1.0;
     Vector3 center1(0.0, radius1, -7.0), center2(2.0, radius2, 0.0);
-    Sphere sphere1(radius1, center1, material1);
-    Sphere sphere2(radius2, center2, material2);
+    Sphere sphere1(radius1, center1, sphere1Mat);
+    Sphere sphere2(radius2, center2, sphere2Mat);
     
     // make tetrahedron
     Vector3 t1(-9.0, 0.0, -3.0), t2(-6.0, 0.0, 0.0), t3(-4.0, 0.0, -4.0), t4(-7.0, 5.0, -2.0);
-    Triangle front(t1, t2, t4, material3);
-    Triangle bottom(t1, t3, t2, material3);
-    Triangle left(t4, t3, t1, material3);
-    Triangle right(t3, t4, t2, material3);
+    Triangle front(t1, t2, t4, tetraMat);
+    Triangle bottom(t1, t3, t2, tetraMat);
+    Triangle left(t4, t3, t1, tetraMat);
+    Triangle right(t3, t4, t2, tetraMat);
 
     // make plane
     Vector3 p1(0.0, 0.0, 10.0), p2(5.0, 0.0, 10.0), p3(2.5, 0.0, -5.0);
-    Plane plane(p1, p2, p3, material4);
+    Plane plane(p1, p2, p3, planeMat);
     
     std::vector<Surface*> surfaces;
     surfaces.push_back(&sphere1);
@@ -214,38 +217,10 @@ int main()
         {
             int idx = (i * width + j) * 3;
             Ray viewRay = cam.viewRay(j, i);
-            Surface *hitSurface;
-            HitRecord rec;
-            t = tmax;
-            for (int k = 0; k < surfaces.size(); k++) {
-                if (surfaces.at(k)->hit(viewRay, tmin, t, rec)) {
-                    hitSurface = surfaces.at(k);
-                    t = rec.t;
-                }
-            }
-            if (rec.hit) {
-                Vector3 normal = hitSurface->normal(viewRay.val(t));
-                Vector3 h = viewRay.dir * -1.0 + lightSource.dir;
-                h = h.normalized();
-                float d = lightSource.intensity * std::max(0.0f, Vector3::dot(normal, lightSource.dir));
-                float s = lightSource.intensity * pow(std::max(0.0f, Vector3::dot(normal, h)), phongExp);
-                float a = ambientIntensity;
-                
-                float lR = (d * hitSurface->material.surfaceColor.red + s * hitSurface->material.specularColor.red
-                    + a * hitSurface->material.ambientColor.red) / 3.0;
-                image[idx] = (int) lR;
-                float lG = (d * hitSurface->material.surfaceColor.green + s * hitSurface->material.specularColor.green
-                    + a * hitSurface->material.ambientColor.green) / 3.0;
-                image[idx+1] = (int) lG;
-                float lB = (d * hitSurface->material.surfaceColor.blue + s * hitSurface->material.specularColor.blue
-                    + a * hitSurface->material.ambientColor.blue) / 3.0;
-                image[idx+2] = (int) lB;
-            }
-            else {
-                image[idx] = (unsigned char) 0;
-                image[idx+1] = (unsigned char) 0;
-                image[idx+2] = (unsigned char) 0;
-            }
+            Color idxColor = rayColor(viewRay, tmin, tmax, surfaces, lightSource);
+            image[idx] = idxColor.red;
+            image[idx+1] = idxColor.green;
+            image[idx+2] = idxColor.blue;
         }
     }
 
