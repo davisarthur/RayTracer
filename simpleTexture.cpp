@@ -169,7 +169,7 @@ int main()
     float phongExp = 100.0;
     float intensity = 1.0;
     float ambientIntensity = 1.0;
-    Vector3 lightDir(0.0, 5.0, 5.0);
+    Vector3 lightDir(5.0, 5.0, 5.0);
     DirectionalLight lightSource(intensity, lightDir);
     
     // create camera
@@ -181,14 +181,14 @@ int main()
 
     // make spheres for the scene
     Color red(255, 0, 0), green(0, 255, 0), blue(0, 0, 255), white(255, 255, 255), black(0, 0, 0);
-    Material material1(red, white, red), material2(green, white, green), material3(blue, white, blue);
+    Material material1(red, white, red), material2(green, white, green), material3(blue, black, blue);
     float radius1 = 3.0, radius2 = 1.0;
-    Vector3 center1(0.0, 0.0, -6.0), center2(2.0, 0.0, 0.0);
+    Vector3 center1(0.0, 0.0, -7.0), center2(2.0, 0.0, 0.0);
     Sphere sphere1(radius1, center1, material1);
     Sphere sphere2(radius2, center2, material2);
     
     // make tetrahedron
-    Vector3 t1(-9.0, 0.0, 0.0), t2(-5.0, 0.0, 0.0), t3(-5.0, 0.0, -4.0), t4(-7.0, 5.0, -2.0);
+    Vector3 t1(-9.0, 0.0, -3.0), t2(-6.0, 0.0, 0.0), t3(-4.0, 0.0, -4.0), t4(-7.0, 5.0, -2.0);
     Triangle front(t1, t2, t4, material3);
     Triangle bottom(t1, t3, t2, material3);
     Triangle left(t4, t3, t1, material3);
@@ -231,8 +231,8 @@ int main()
                 float lG = (d * hitSurface->material.surfaceColor.green + s * hitSurface->material.specularColor.green
                     + a * hitSurface->material.ambientColor.green) / 3.0;
                 image[idx+1] = (int) lG;
-                float lB = d * hitSurface->material.surfaceColor.blue + s * hitSurface->material.specularColor.blue
-                    + a * hitSurface->material.ambientColor.blue / 3.0;
+                float lB = (d * hitSurface->material.surfaceColor.blue + s * hitSurface->material.specularColor.blue
+                    + a * hitSurface->material.ambientColor.blue) / 3.0;
                 image[idx+2] = (int) lB;
             }
             else {
