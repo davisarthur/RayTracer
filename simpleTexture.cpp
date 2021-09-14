@@ -6,6 +6,7 @@
 
 #include <math.h>
 #include <array>
+#include <vector>
 #include <algorithm>
 #include <iostream>
 
@@ -198,14 +199,14 @@ int main()
     Vector3 p1(0.0, 0.0, 10.0), p2(5.0, 0.0, 10.0), p3(2.5, 0.0, -5.0);
     Plane plane(p1, p2, p3, material4);
     
-    std::array<Surface*, 7> surfaces;
-    surfaces[0] = &sphere1;
-    surfaces[1] = &sphere2;
-    surfaces[2] = &front;
-    surfaces[3] = &bottom;
-    surfaces[4] = &left;
-    surfaces[5] = &right;
-    surfaces[6] = &plane;
+    std::vector<Surface*> surfaces;
+    surfaces.push_back(&sphere1);
+    surfaces.push_back(&sphere2);
+    surfaces.push_back(&front);
+    surfaces.push_back(&bottom);
+    surfaces.push_back(&left);
+    surfaces.push_back(&right);
+    surfaces.push_back(&plane);
 
     for(int i = 0; i < height; i++)
     {
@@ -217,8 +218,8 @@ int main()
             HitRecord rec;
             t = tmax;
             for (int k = 0; k < surfaces.size(); k++) {
-                if (surfaces[k]->hit(viewRay, tmin, t, rec)) {
-                    hitSurface = surfaces[k];
+                if (surfaces.at(k)->hit(viewRay, tmin, t, rec)) {
+                    hitSurface = surfaces.at(k);
                     t = rec.t;
                 }
             }

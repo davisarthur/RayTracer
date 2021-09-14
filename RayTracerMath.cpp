@@ -280,3 +280,40 @@ DirectionalLight::DirectionalLight(float intensityIn, Vector3 dirIn) {
    intensity = intensityIn;
    dir = dirIn.normalized();
 }
+
+/*
+Color rayColor(Ray r, float t0, float tf, std::array<Surface*> surfaces) {
+   Surface *hitSurface;
+   HitRecord rec;
+   float t = tf;
+   for (int k = 0; k < surfaces.size(); k++) {
+      if (surfaces[k]->hit(viewRay, tmin, t, rec)) {
+         hitSurface = surfaces[k];
+         t = rec.t;
+      }
+   }
+            if (rec.hit) {
+                Vector3 normal = hitSurface->normal(viewRay.val(t));
+                Vector3 h = viewRay.dir * -1.0 + lightSource.dir;
+                h = h.normalized();
+                float d = lightSource.intensity * std::max(0.0f, Vector3::dot(normal, lightSource.dir));
+                float s = lightSource.intensity * pow(std::max(0.0f, Vector3::dot(normal, h)), phongExp);
+                float a = ambientIntensity;
+                
+                float lR = (d * hitSurface->material.surfaceColor.red + s * hitSurface->material.specularColor.red
+                    + a * hitSurface->material.ambientColor.red) / 3.0;
+                image[idx] = (int) lR;
+                float lG = (d * hitSurface->material.surfaceColor.green + s * hitSurface->material.specularColor.green
+                    + a * hitSurface->material.ambientColor.green) / 3.0;
+                image[idx+1] = (int) lG;
+                float lB = (d * hitSurface->material.surfaceColor.blue + s * hitSurface->material.specularColor.blue
+                    + a * hitSurface->material.ambientColor.blue) / 3.0;
+                image[idx+2] = (int) lB;
+            }
+            else {
+                image[idx] = (unsigned char) 0;
+                image[idx+1] = (unsigned char) 0;
+                image[idx+2] = (unsigned char) 0;
+            }
+}
+*/

@@ -126,3 +126,5 @@ class DirectionalLight {
 
       DirectionalLight(float intensityIn, Vector3 dirIn);
 };
+
+Color rayColor(Ray r, float t0, float tf);
