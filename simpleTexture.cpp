@@ -169,11 +169,11 @@ int main()
     float phongExp = 2.0;
     float intensity = 1.0;
     float ambientIntensity = 1.0;
-    Vector3 lightDir(0.5, 4.0, 5.0);
+    Vector3 lightDir(-1.0, 0.0, 5.0);
     DirectionalLight lightSource(intensity, lightDir);
     
     // create camera
-    Vector3 viewDir(0.0, -0.2, -1.0), up(0.0, 1.0, 0.0), viewPoint(0.0, 2.0, 10.0);
+    Vector3 viewDir(0.0, 0.2, -1.0), up(0.0, 1.0, 0.0), viewPoint(0.0, 2.0, 10.0);
     float t = 10.0, b = -10.0, l = -10.0, r = 10.0;
     OrthographicCamera cam(viewPoint, up, viewDir, t, b, l, r, width, height);
     float tmin = 0.001;
@@ -188,13 +188,19 @@ int main()
     Sphere sphere2(radius2, center2, material2);
     
     // make tetrahedron
-    Vector3 ta(0.0, 0.0, -10.0), tb(0.0, -3.0, -10.0), tc(-8.0, 0.0, -10.0);
-    Triangle triangle1(ta, tb, tc, material3);
+    Vector3 t1(-9.0, 0.0, 0.0), t2(-5.0, 0.0, 0.0), t3(-7.0, 0.0, -5.0), t4(-7.0, 5.0, 0.0);
+    Triangle front(t1, t2, t4, material3);
+    Triangle bottom(t1, t3, t2, material3);
+    Triangle left(t4, t3, t1, material3);
+    Triangle right(t3, t4, t2, material3);
     
-    std::array<Surface*, 3> surfaces;
+    std::array<Surface*, 6> surfaces;
     surfaces[0] = &sphere1;
     surfaces[1] = &sphere2;
-    surfaces[2] = &triangle1;
+    surfaces[2] = &front;
+    surfaces[3] = &bottom;
+    surfaces[4] = &left;
+    surfaces[5] = &right;
 
     for(int i = 0; i < height; i++)
     {
