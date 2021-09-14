@@ -230,6 +230,36 @@ Vector3 Triangle::normal(Vector3 pos) {
    return n;
 }
 
+///////////
+// Plane //
+///////////
+Plane::Plane(Vector3 aIn, Vector3 b, Vector3 c, Material materialIn) {
+   material = materialIn;
+   a = aIn;
+   n = Vector3::cross(b - a, c - b).normalized();
+}
+
+bool Plane::hit(Ray r, float t0, float tf, HitRecord& rec) {
+   // make sure the ray is not parallel to the triangle's plane
+   if (std::abs(Vector3::dot(r.dir, n)) < 0.000001) {
+      return false;
+   }
+   
+   // determine intersection point
+   float t = Vector3::dot((a - r.origin), n) / Vector3::dot(r.dir, n);
+   Vector3 x = r.val(t);
+   if (t < t0 || t > tf) {
+      return false;
+   }
+
+   rec = HitRecord(t);
+   return true;
+}
+
+Vector3 Plane::normal(Vector3 pos) {
+   return n;
+}
+
 ////////////////
 // Hit Record //
 ////////////////

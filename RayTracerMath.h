@@ -109,6 +109,16 @@ class Triangle : public Surface {
       Vector3 normal(Vector3 pos);
 };
 
+class Plane : public Surface {
+   public:
+      Vector3 a;
+      Vector3 n;
+
+      Plane(Vector3 aIn, Vector3 b, Vector3 c, Material materialIn);
+      bool hit(Ray r, float t0, float tf, HitRecord& rec);
+      Vector3 normal(Vector3 pos);
+};
+
 class DirectionalLight {
    public:
       float intensity;

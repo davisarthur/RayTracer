@@ -173,7 +173,7 @@ int main()
     DirectionalLight lightSource(intensity, lightDir);
     
     // create camera
-    Vector3 viewDir(0.0, -0.5, -1.0), up(0.0, 1.0, 0.0), viewPoint(0.0, 5.0, 10.0);
+    Vector3 viewDir(0.0, -0.2, -1.0), up(0.0, 1.0, 0.0), viewPoint(0.0, 10.0, 50.0);
     float t = 10.0, b = -10.0, l = -10.0, r = 10.0;
     OrthographicCamera cam(viewPoint, up, viewDir, t, b, l, r, width, height);
     float tmin = 0.001;
@@ -181,9 +181,9 @@ int main()
 
     // make spheres for the scene
     Color red(255, 0, 0), green(0, 255, 0), blue(0, 0, 255), white(255, 255, 255), black(0, 0, 0);
-    Material material1(red, white, red), material2(green, white, green), material3(blue, black, blue);
+    Material material1(red, white, red), material2(green, white, green), material3(blue, white, blue), material4(white, white, white);
     float radius1 = 3.0, radius2 = 1.0;
-    Vector3 center1(0.0, 0.0, -7.0), center2(2.0, 0.0, 0.0);
+    Vector3 center1(0.0, radius1, -7.0), center2(2.0, radius2, 0.0);
     Sphere sphere1(radius1, center1, material1);
     Sphere sphere2(radius2, center2, material2);
     
@@ -193,14 +193,19 @@ int main()
     Triangle bottom(t1, t3, t2, material3);
     Triangle left(t4, t3, t1, material3);
     Triangle right(t3, t4, t2, material3);
+
+    // make plane
+    Vector3 p1(0.0, 0.0, 10.0), p2(5.0, 0.0, 10.0), p3(2.5, 0.0, -5.0);
+    Plane plane(p1, p2, p3, material4);
     
-    std::array<Surface*, 6> surfaces;
+    std::array<Surface*, 7> surfaces;
     surfaces[0] = &sphere1;
     surfaces[1] = &sphere2;
     surfaces[2] = &front;
     surfaces[3] = &bottom;
     surfaces[4] = &left;
     surfaces[5] = &right;
+    surfaces[6] = &plane;
 
     for(int i = 0; i < height; i++)
     {
@@ -236,9 +241,9 @@ int main()
                 image[idx+2] = (int) lB;
             }
             else {
-                image[idx] = (unsigned char) 100;
-                image[idx+1] = (unsigned char) 100;
-                image[idx+2] = (unsigned char) 100;
+                image[idx] = (unsigned char) 0;
+                image[idx+1] = (unsigned char) 0;
+                image[idx+2] = (unsigned char) 0;
             }
         }
     }
@@ -253,8 +258,6 @@ int main()
     {
         std::cout << "Failed to load texture" << std::endl;
     }
-   
-
 
     // render loop
     // -----------
