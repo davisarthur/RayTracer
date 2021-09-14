@@ -69,13 +69,12 @@ class Color {
 
 class Material {
    public:
-      Color color;
-      float kd; // diffuse coefficient
-      float ks; // specular coefficient
-      float ka; // ambient coefficient
+      Color surfaceColor;
+      Color specularColor;
+      Color ambientColor;
 
       Material();
-      Material(Color colorIn, float kdIn, float ksIn, float kaIn);
+      Material(Color surfaceColorIn, Color specularColorIn, Color ambientColorIn);
 };
 
 class Surface {

@@ -135,17 +135,15 @@ Color::Color(int redIn, int greenIn, int blueIn) {
 // Material //
 //////////////
 Material::Material() {
-   color = Color(0, 0, 0);
-   kd = 0.0;
-   ks = 0.0;
-   ka = 0.0;
+   surfaceColor = Color(0, 0, 0);
+   specularColor = Color(0, 0, 0);
+   ambientColor = Color(0, 0, 0);
 }
 
-Material::Material(Color colorIn, float kdIn, float ksIn, float kaIn) {
-   color = colorIn;
-   kd = kdIn;
-   ks = ksIn;
-   ka = kaIn;
+Material::Material(Color surfaceColorIn, Color specularColorIn, Color ambientColorIn) {
+   surfaceColor = surfaceColorIn;
+   specularColor = specularColorIn;
+   ambientColor = ambientColorIn;
 }
 
 /////////////

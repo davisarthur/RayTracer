@@ -162,33 +162,33 @@ int main()
 
     // Create the image (RGB Array) to be displayed
     int width, height;
-    width = 256; height = 256; // keep it in powers of 2!
+    width = 512; height = 512; // keep it in powers of 2!
     unsigned char image[width*height*3];
 
     // create light source
-    float phongExp = 2.0;
+    float phongExp = 100.0;
     float intensity = 1.0;
     float ambientIntensity = 1.0;
-    Vector3 lightDir(0.0, 0.0, 5.0);
+    Vector3 lightDir(0.0, 5.0, 5.0);
     DirectionalLight lightSource(intensity, lightDir);
     
     // create camera
-    Vector3 viewDir(0.0, -1.0, -1.0), up(0.0, 1.0, 0.0), viewPoint(0.0, 10.0, 10.0);
+    Vector3 viewDir(0.0, -0.5, -1.0), up(0.0, 1.0, 0.0), viewPoint(0.0, 5.0, 10.0);
     float t = 10.0, b = -10.0, l = -10.0, r = 10.0;
     OrthographicCamera cam(viewPoint, up, viewDir, t, b, l, r, width, height);
     float tmin = 0.001;
     float tmax = 100000;
 
     // make spheres for the scene
-    Color color1(0, 255, 0), color2(255, 0, 0), color3(255, 0, 0);
-    Material material1(color1, 1.0, 3.0, 1.0), material2(color2, 1.0, 1.0, 1.0), material3(color3, 1.0, 1.0, 1.0);
+    Color red(255, 0, 0), green(0, 255, 0), blue(0, 0, 255), white(255, 255, 255), black(0, 0, 0);
+    Material material1(red, white, red), material2(green, white, green), material3(blue, white, blue);
     float radius1 = 3.0, radius2 = 1.0;
-    Vector3 center1(0.0, 0.0, -5.0), center2(2.0, 0.0, 0.0);
+    Vector3 center1(0.0, 0.0, -6.0), center2(2.0, 0.0, 0.0);
     Sphere sphere1(radius1, center1, material1);
     Sphere sphere2(radius2, center2, material2);
     
     // make tetrahedron
-    Vector3 t1(-9.0, 0.0, 0.0), t2(-5.0, 0.0, 0.0), t3(-7.0, 0.0, -5.0), t4(-7.0, 5.0, -2.0);
+    Vector3 t1(-9.0, 0.0, 0.0), t2(-5.0, 0.0, 0.0), t3(-5.0, 0.0, -4.0), t4(-7.0, 5.0, -2.0);
     Triangle front(t1, t2, t4, material3);
     Triangle bottom(t1, t3, t2, material3);
     Triangle left(t4, t3, t1, material3);
@@ -221,14 +221,19 @@ int main()
                 Vector3 normal = hitSurface->normal(viewRay.val(t));
                 Vector3 h = viewRay.dir * -1.0 + lightSource.dir;
                 h = h.normalized();
-                float d = hitSurface->material.kd * lightSource.intensity * std::max(0.0f, Vector3::dot(normal, lightSource.dir));
-                float s = hitSurface->material.ks * lightSource.intensity * pow(std::max(0.0f, Vector3::dot(normal, h)), phongExp);
-                float a = hitSurface->material.ka * ambientIntensity;
-                //float l = (d + s + a) / (lightSource.intensity * (hitSurface->material.kd + hitSurface->material.ks) + a);
-                float l = d;
-                image[idx] = (int) (l * hitSurface->material.color.red);
-                image[idx+1] = (int) (l * hitSurface->material.color.green);
-                image[idx+2] = (int) (l * hitSurface->material.color.blue);
+                float d = lightSource.intensity * std::max(0.0f, Vector3::dot(normal, lightSource.dir));
+                float s = lightSource.intensity * pow(std::max(0.0f, Vector3::dot(normal, h)), phongExp);
+                float a = ambientIntensity;
+                
+                float lR = (d * hitSurface->material.surfaceColor.red + s * hitSurface->material.specularColor.red
+                    + a * hitSurface->material.ambientColor.red) / 3.0;
+                image[idx] = (int) lR;
+                float lG = (d * hitSurface->material.surfaceColor.green + s * hitSurface->material.specularColor.green
+                    + a * hitSurface->material.ambientColor.green) / 3.0;
+                image[idx+1] = (int) lG;
+                float lB = d * hitSurface->material.surfaceColor.blue + s * hitSurface->material.specularColor.blue
+                    + a * hitSurface->material.ambientColor.blue / 3.0;
+                image[idx+2] = (int) lB;
             }
             else {
                 image[idx] = (unsigned char) 100;
