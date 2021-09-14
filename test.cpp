@@ -23,23 +23,26 @@ int main() {
    Ray ray(o, dir);
    Vector3 paramVal = ray.val(1);
    std::cout << paramVal.x << ", " << paramVal.y << ", " << paramVal.z << std::endl;
+   */
 
    // Test Camera
    std::cout << std::endl << "Camera" << std::endl;
-   Vector3 viewDir(0.0, 0.0, 5.0), up(0.0, 4.0, 0.0), viewPoint = o;
+   Vector3 o(0.0, 2.0, 10.0);
+   Vector3 viewDir(0.0, -0.2, -1.0), up(0.0, 4.0, 0.0), viewPoint = o;
+   float param = 5.0;
    float t = 10.0, b = -10.0, l = -10.0, r = 10.0;
    int nx = 3, ny = 3;
    OrthographicCamera cam(o, up, viewDir, t, b, l, r, nx, ny);
    for (int i = 0; i < nx; i++) {
       for (int j = 0; j < ny; j++) {
          Ray ijR = cam.viewRay(i, j);
-         Vector3 ijDir = ijR.dir;
-         Vector3 ijOrigin = ijR.origin;
-         std::cout << "Direction: (" << ijDir.x << ", " << ijDir.y << ", " << ijDir.z << ")" << std::endl;
-         std::cout << "Origin: (" << ijOrigin.x << ", " << ijOrigin.y << ", " << ijOrigin.z << ")" << std::endl << std::endl;
+         Vector3 ijRval = ijR.val(param);
+         std::cout << "Param value: (" << ijRval.x << ", " << ijRval.y << ", " << ijRval.z << ")" << std::endl;
       }
    }
-   */
+
+   // Test Triangle
+   /*
    Color color1(0, 255, 0);
    Material material1(color1, 1.0, 3.0, 1.0);
    Vector3 ta(10.0, 0.0, 0.0), tb(0.0, 10.0, 0.0), tc(-10.0, 0.0, 0.0);
@@ -49,4 +52,5 @@ int main() {
    Ray r(origin, dir);
    HitRecord rec;
    std::cout << triangle1.hit(r, 0.0001, 1000000.0, rec) << std::endl;
+   */
 }

@@ -176,9 +176,11 @@ bool Sphere::hit(Ray r, float t0, float tf, HitRecord& rec) {
       - Vector3::dot(d, d) * (Vector3::dot((e - c), (e - c)) - pow(R, 2.0));
    bool hit = false;
    if (discriminant > 0.0) {
-      hit = true;
       float t = (Vector3::dot(d * -1.0, (e - c)) - discriminant) / Vector3::dot(d, d);
-      rec = HitRecord(t);
+      if (t > t0 && t < tf) {
+         hit = true;
+         rec = HitRecord(t);
+      }
    }
    return hit;
 }
@@ -208,6 +210,9 @@ bool Triangle::hit(Ray r, float t0, float tf, HitRecord& rec) {
    // determine intersection point
    float t = Vector3::dot((a - r.origin), n) / Vector3::dot(r.dir, n);
    Vector3 x = r.val(t);
+   if (t < t0 || t > tf) {
+      return false;
+   }
 
    // see if intersection point is within the triangle
    if (Vector3::dot(Vector3::cross((b - a), (x - a)), n) < 0.0) {
