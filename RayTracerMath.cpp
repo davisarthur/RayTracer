@@ -3,6 +3,7 @@
 #include <iostream>
 #include <cmath>
 #include <vector>
+#include <algorithm>
 
 /////////////
 // Vector3 //
@@ -127,9 +128,17 @@ Color::Color() {
 }
 
 Color::Color(int redIn, int greenIn, int blueIn) {
-   red = (unsigned char) redIn;
-   green = (unsigned char) greenIn;
-   blue = (unsigned char) blueIn;
+   red = (unsigned char) std::min(redIn, 255);
+   green = (unsigned char) std::min(greenIn, 255);
+   blue = (unsigned char) std::min(blueIn, 255);
+}
+
+Color Color::operator+(const Color& c) const {
+   Color result;
+   result.red = this->red + c.red;
+   result.green = this->green + c.green;
+   result.blue = this->blue + c.blue;
+   return result;
 }
 
 //////////////
@@ -141,14 +150,19 @@ Material::Material() {
    ambientColor = Color(0, 0, 0);
    ambientIntensity = 1.0;
    phongExp = 100.0;
+   glazed = false;
 }
 
-Material::Material(Color surfaceColorIn, Color specularColorIn, Color ambientColorIn, float ambientIntensityIn, float phongExpIn) {
+Material::Material(Color surfaceColorIn, Color specularColorIn, Color ambientColorIn, 
+   float surfaceIntensityIn, float specularIntensityIn, float ambientIntensityIn, float phongExpIn) {
    surfaceColor = surfaceColorIn;
    specularColor = specularColorIn;
    ambientColor = ambientColorIn;
+   surfaceIntensity = surfaceIntensityIn;
+   specularIntensity = specularIntensityIn;
    ambientIntensity = ambientIntensityIn;
    phongExp = phongExpIn;
+   glazed = false;
 }
 
 /////////////
@@ -299,16 +313,22 @@ Color rayColor(Ray r, float t0, float tf, std::vector<Surface*> surfaces, Direct
    if (rec.hit) {
       Vector3 normal = hitSurface->normal(r.val(t));
       Vector3 h = (r.dir * -1.0 + lightSource.dir).normalized();
-      float d = lightSource.intensity * std::max(0.0f, Vector3::dot(normal, lightSource.dir));
-      float s = lightSource.intensity * pow(std::max(0.0f, Vector3::dot(normal, h)), hitSurface->material.phongExp);
+      float d = hitSurface->material.surfaceIntensity * lightSource.intensity 
+         * std::max(0.0f, Vector3::dot(normal, lightSource.dir));
+      float s = hitSurface->material.specularIntensity * lightSource.intensity 
+         * pow(std::max(0.0f, Vector3::dot(normal, h)), hitSurface->material.phongExp);
       float a = hitSurface->material.ambientIntensity;
                 
       float lR = (d * hitSurface->material.surfaceColor.red + s * hitSurface->material.specularColor.red
-         + a * hitSurface->material.ambientColor.red) / (2.0 + hitSurface->material.ambientIntensity);
+         + a * hitSurface->material.ambientColor.red);
       float lG = (d * hitSurface->material.surfaceColor.green + s * hitSurface->material.specularColor.green
-         + a * hitSurface->material.ambientColor.green) / (2.0 + hitSurface->material.ambientIntensity);
+         + a * hitSurface->material.ambientColor.green);
       float lB = (d * hitSurface->material.surfaceColor.blue + s * hitSurface->material.specularColor.blue
-         + a * hitSurface->material.ambientColor.blue) / (2.0 + hitSurface->material.ambientIntensity);
+         + a * hitSurface->material.ambientColor.blue);
+      if (hitSurface->material.glazed) {
+         Ray mr(r.val(t), r.dir - normal * 2 * Vector3::dot(r.dir, normal));
+         return Color(lR, lG, lB) + rayColor(mr, t0, tf, surfaces, lightSource);
+      }
       return Color(lR, lG, lB);
    }
    return Color(0, 0, 0);

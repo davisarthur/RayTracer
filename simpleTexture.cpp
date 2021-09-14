@@ -10,7 +10,6 @@
 #include <algorithm>
 #include <iostream>
 
-
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow *window);
 
@@ -169,7 +168,9 @@ int main()
     // create light source
     float phongExp = 100.0;
     float intensity = 1.0;
-    float ambientIntensity = 1.0;
+    float surfaceIntensity = 0.2;
+    float specularIntensity = 0.2;
+    float ambientIntensity = 0.2;
     Vector3 lightDir(5.0, 5.0, 5.0);
     DirectionalLight lightSource(intensity, lightDir);
     
@@ -182,10 +183,11 @@ int main()
 
     // make spheres for the scene
     Color red(255, 0, 0), green(0, 255, 0), blue(0, 0, 255), white(255, 255, 255), black(0, 0, 0);
-    Material sphere1Mat(red, white, red, ambientIntensity, phongExp);
-    Material sphere2Mat(green, white, green, ambientIntensity, phongExp); 
-    Material tetraMat(blue, white, blue, ambientIntensity, phongExp);
-    Material planeMat(white, white, white, ambientIntensity, phongExp);
+    Material sphere1Mat(red, white, red, surfaceIntensity, specularIntensity, ambientIntensity, phongExp);
+    Material sphere2Mat(green, white, green, surfaceIntensity, specularIntensity, ambientIntensity, phongExp); 
+    Material tetraMat(blue, white, blue, surfaceIntensity, specularIntensity, ambientIntensity, phongExp);
+    Material planeMat(white, white, white, surfaceIntensity, specularIntensity, ambientIntensity, phongExp);
+    planeMat.glazed = true;
     float radius1 = 3.0, radius2 = 1.0;
     Vector3 center1(0.0, radius1, -7.0), center2(2.0, radius2, 0.0);
     Sphere sphere1(radius1, center1, sphere1Mat);

@@ -67,6 +67,8 @@ class Color {
 
       Color();
       Color(int redIn, int greenIn, int blueIn);
+
+      Color operator+(const Color&) const;
 };
 
 class Material {
@@ -74,11 +76,15 @@ class Material {
       Color surfaceColor;
       Color specularColor;
       Color ambientColor;
+      float surfaceIntensity;
+      float specularIntensity;
       float ambientIntensity;
       float phongExp; 
+      bool glazed;
 
       Material();
-      Material(Color surfaceColorIn, Color specularColorIn, Color ambientColorIn, float ambientIntensityIn, float phongExpIn);
+      Material(Color surfaceColorIn, Color specularColorIn, Color ambientColorIn, 
+         float surfaceIntensityIn, float specularIntensityIn, float ambientIntensityIn, float phongExpIn);
 };
 
 class Surface {
