@@ -34,6 +34,7 @@ class Camera {
       int nx, ny;
       
       virtual Ray viewRay(int nx, int ny) = 0;
+      virtual void changeOrientation(Vector3 viewPoint, Vector3 up, Vector3 viewDir) = 0;
 
    private:
       virtual Vector3 pixelToPos(int xi, int yi) = 0;
@@ -44,7 +45,7 @@ class OrthographicCamera : public Camera {
       OrthographicCamera(Vector3 viewPoint, Vector3 up, Vector3 viewDir, 
          float tIn, float bIn, float lIn, float rIn, int nxIn, int nyIn);
       Ray viewRay(int xi, int yi);
-      
+      void changeOrientation(Vector3 viewPoint, Vector3 up, Vector3 viewDir);
 
    private:
       Vector3 pixelToPos(int xi, int yi);

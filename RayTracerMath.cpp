@@ -112,6 +112,13 @@ Ray OrthographicCamera::viewRay(int xi, int yi) {
    return Ray(origin, dir);
 }
 
+void OrthographicCamera::changeOrientation(Vector3 viewPoint, Vector3 up, Vector3 viewDir) {
+   w = (viewDir * -1.0f).normalized();
+   e = viewPoint;
+   u = Vector3::cross(up, w).normalized();
+   v = Vector3::cross(w, u);
+}
+
 Vector3 OrthographicCamera::pixelToPos(int xi, int yi) {
    float ucoord = l + (r - l) * (xi + 0.5) / nx;
    float vcoord = b + (t - b) * (yi + 0.5) / ny;

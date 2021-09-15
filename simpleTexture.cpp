@@ -220,10 +220,8 @@ int main()
     surfaces.push_back(&right);
     surfaces.push_back(&plane);
 
-    for(int i = 0; i < height; i++)
-    {
-        for (int j = 0; j < width; j++)
-        {
+    for(int i = 0; i < height; i++) {
+        for (int j = 0; j < width; j++) {
             int idx = (i * width + j) * 3;
             Ray viewRay = cam.viewRay(j, i);
             Color idxColor = rayColor(viewRay, tmin, tmax, surfaces, lightSource);
@@ -234,17 +232,13 @@ int main()
     }
 
     unsigned char *data = &image[0];
-    if (data)
-    {
+    if (data) {
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
         glGenerateMipmap(GL_TEXTURE_2D);
     }
-    else
-    {
+    else {
         std::cout << "Failed to load texture" << std::endl;
     }
-
-    int imageIndex = 0;
 
     // render loop
     // -----------
@@ -271,12 +265,6 @@ int main()
         // -------------------------------------------------------------------------------
         glfwSwapBuffers(window);
         glfwPollEvents();
-
-        std::string fnameTemp = "movie/test" + std::to_string(imageIndex) + ".png";
-        char fname[fnameTemp.length()];
-        strcpy(fname, fnameTemp.c_str());
-        saveImage(fname, window);
-        imageIndex++;
     }
 
     // optional: de-allocate all resources once they've outlived their purpose:
