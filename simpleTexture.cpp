@@ -2,21 +2,28 @@
 #include <GL/glew.h>
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
-#include "RayTracerMath.h"
 
+// image library
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image/stb_image.h"
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#include "stb_image/stb_image_write.h"
+
+#include "RayTracerMath.h"
 #include <math.h>
 #include <array>
 #include <vector>
 #include <algorithm>
 #include <iostream>
+#include <string>
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow *window);
+void saveImage(char* filepath, GLFWwindow* w);
 
 // settings
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 800;
-
 
 const char *vertexShaderSource = "#version 330 core\n"
     "layout (location = 0) in vec3 aPos;\n"
@@ -237,6 +244,8 @@ int main()
         std::cout << "Failed to load texture" << std::endl;
     }
 
+    int imageIndex = 0;
+
     // render loop
     // -----------
     while (!glfwWindowShouldClose(window))
@@ -262,6 +271,12 @@ int main()
         // -------------------------------------------------------------------------------
         glfwSwapBuffers(window);
         glfwPollEvents();
+
+        std::string fnameTemp = "movie/test" + std::to_string(imageIndex) + ".png";
+        char fname[fnameTemp.length()];
+        strcpy(fname, fnameTemp.c_str());
+        saveImage(fname, window);
+        imageIndex++;
     }
 
     // optional: de-allocate all resources once they've outlived their purpose:
@@ -291,4 +306,20 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
     // make sure the viewport matches the new window dimensions; note that width and 
     // height will be significantly larger than specified on retina displays.
     glViewport(0, 0, width, height);
+}
+
+// code to save an image based on this online tutorial: https://lencerf.github.io/post/2019-09-21-save-the-opengl-rendering-to-image-file/
+void saveImage(char* filepath, GLFWwindow* w) {
+    int width, height;
+    glfwGetFramebufferSize(w, &width, &height);
+    GLsizei nrChannels = 3;
+    GLsizei stride = nrChannels * width;
+    stride += (stride % 4) ? (4 - stride % 4) : 0;
+    GLsizei bufferSize = stride * height;
+    std::vector<char> buffer(bufferSize);
+    glPixelStorei(GL_PACK_ALIGNMENT, 4);
+    glReadBuffer(GL_BACK);
+    glReadPixels(0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, buffer.data());
+    stbi_flip_vertically_on_write(true);
+    stbi_write_png(filepath, width, height, nrChannels, buffer.data(), stride);
 }
