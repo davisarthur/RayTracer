@@ -134,11 +134,33 @@ Color::Color(int redIn, int greenIn, int blueIn) {
 }
 
 Color Color::operator+(const Color& c) const {
+   int red = (int) this->red + c.red;
+   int green = (int) this->green + c.green;
+   int blue = (int) this->blue + c.blue;
+   return Color(red, green, blue);
+}
+
+Color Color::operator*(const Color& c) const {
+   int red = (int) this->red * c.red;
+   int green = (int) this->green * c.green;
+   int blue = (int) this->blue * c.blue;
+   return Color(red, green, blue);
+}
+
+Color Color::operator*(const float c) const {
    Color result;
-   result.red = this->red + c.red;
-   result.green = this->green + c.green;
-   result.blue = this->blue + c.blue;
-   return result;
+   int red = (int) this->red * c;
+   int green = (int) this->green * c;
+   int blue = (int) this->blue * c;
+   return Color(red, green, blue);
+}
+
+Color Color::operator/(const float c) const {
+   Color result;
+   int red = (int) this->red / c;
+   int green = (int) this->green / c;
+   int blue = (int) this->blue / c;
+   return Color(red, green, blue);
 }
 
 //////////////
@@ -327,7 +349,8 @@ Color rayColor(Ray r, float t0, float tf, std::vector<Surface*> surfaces, Direct
          + a * hitSurface->material.ambientColor.blue);
       if (hitSurface->material.glazed) {
          Ray mr(r.val(t), r.dir - normal * 2 * Vector3::dot(r.dir, normal));
-         return Color(lR, lG, lB) + rayColor(mr, t0, tf, surfaces, lightSource);
+         return Color(lR, lG, lB) + hitSurface->material.specularColor / 255.0f 
+            * rayColor(mr, t0, tf, surfaces, lightSource) * hitSurface->material.specularIntensity;
       }
       return Color(lR, lG, lB);
    }

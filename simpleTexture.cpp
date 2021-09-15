@@ -168,9 +168,9 @@ int main()
     // create light source
     float phongExp = 100.0;
     float intensity = 1.0;
-    float surfaceIntensity = 0.2;
-    float specularIntensity = 0.2;
-    float ambientIntensity = 0.2;
+    float surfaceIntensity = 0.4;
+    float specularIntensity = 0.25;
+    float ambientIntensity = 0.1;
     Vector3 lightDir(5.0, 5.0, 5.0);
     DirectionalLight lightSource(intensity, lightDir);
     

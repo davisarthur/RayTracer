@@ -69,6 +69,9 @@ class Color {
       Color(int redIn, int greenIn, int blueIn);
 
       Color operator+(const Color&) const;
+      Color operator*(const Color&) const;
+      Color operator*(const float) const;
+      Color operator/(const float) const;
 };
 
 class Material {
