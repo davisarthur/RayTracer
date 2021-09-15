@@ -168,7 +168,7 @@ int main() {
 
    // Create the image (RGB Array) to be displayed
    int width, height;
-   width = 512; height = 512; // keep it in powers of 2!
+   width = 32; height = 32; // keep it in powers of 2!
    unsigned char image[width*height*3];
 
    // create light source
