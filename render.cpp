@@ -9,7 +9,7 @@
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "stb_image/stb_image_write.h"
 
-#include "RayTracerMath.h"
+#include "RayTracer.h"
 #include <math.h>
 #include <array>
 #include <vector>
@@ -49,8 +49,7 @@ const char *fragmentShaderSource = "#version 330 core\n"
     "}\n\0";
     
 
-int main()
-{
+int main() {
     // glfw: initialize and configure
     // ------------------------------
     glfwInit();
@@ -173,11 +172,7 @@ int main()
     unsigned char image[width*height*3];
 
     // create light source
-    float phongExp = 100.0;
     float intensity = 1.0;
-    float surfaceIntensity = 0.4;
-    float specularIntensity = 0.25;
-    float ambientIntensity = 0.1;
     Vector3 lightDir(5.0, 5.0, 5.0);
     DirectionalLight lightSource(intensity, lightDir);
     
@@ -185,51 +180,12 @@ int main()
     Vector3 viewDir(0.0, -0.2, -1.0), up(0.0, 1.0, 0.0), viewPoint(0.0, 10.0, 50.0);
     float t = 10.0, b = -10.0, l = -10.0, r = 10.0;
     OrthographicCamera cam(viewPoint, up, viewDir, t, b, l, r, width, height);
-    float tmin = 0.001;
-    float tmax = 100000;
+    float tmin = 0.00001;
+    float tmax = 10000.0;
 
-    // make spheres for the scene
-    Color red(255, 0, 0), green(0, 255, 0), blue(0, 0, 255), white(255, 255, 255), black(0, 0, 0);
-    Material sphere1Mat(red, white, red, surfaceIntensity, specularIntensity, ambientIntensity, phongExp);
-    Material sphere2Mat(green, white, green, surfaceIntensity, specularIntensity, ambientIntensity, phongExp); 
-    Material tetraMat(blue, white, blue, surfaceIntensity, specularIntensity, ambientIntensity, phongExp);
-    Material planeMat(white, white, white, surfaceIntensity, specularIntensity, ambientIntensity, phongExp);
-    planeMat.glazed = true;
-    float radius1 = 3.0, radius2 = 1.0;
-    Vector3 center1(0.0, radius1, -7.0), center2(2.0, radius2, 0.0);
-    Sphere sphere1(radius1, center1, sphere1Mat);
-    Sphere sphere2(radius2, center2, sphere2Mat);
-    
-    // make tetrahedron
-    Vector3 t1(-9.0, 0.0, -3.0), t2(-6.0, 0.0, 0.0), t3(-4.0, 0.0, -4.0), t4(-7.0, 5.0, -2.0);
-    Triangle front(t1, t2, t4, tetraMat);
-    Triangle bottom(t1, t3, t2, tetraMat);
-    Triangle left(t4, t3, t1, tetraMat);
-    Triangle right(t3, t4, t2, tetraMat);
-
-    // make plane
-    Vector3 p1(0.0, 0.0, 10.0), p2(5.0, 0.0, 10.0), p3(2.5, 0.0, -5.0);
-    Plane plane(p1, p2, p3, planeMat);
-    
-    std::vector<Surface*> surfaces;
-    surfaces.push_back(&sphere1);
-    surfaces.push_back(&sphere2);
-    surfaces.push_back(&front);
-    surfaces.push_back(&bottom);
-    surfaces.push_back(&left);
-    surfaces.push_back(&right);
-    surfaces.push_back(&plane);
-
-    for(int i = 0; i < height; i++) {
-        for (int j = 0; j < width; j++) {
-            int idx = (i * width + j) * 3;
-            Ray viewRay = cam.viewRay(j, i);
-            Color idxColor = rayColor(viewRay, tmin, tmax, surfaces, lightSource);
-            image[idx] = idxColor.red;
-            image[idx+1] = idxColor.green;
-            image[idx+2] = idxColor.blue;
-        }
-    }
+    // create scene
+    Scene scene(cam, lightSource);
+    scene.render(image, width, height, tmin, tmax);
 
     unsigned char *data = &image[0];
     if (data) {
@@ -242,8 +198,7 @@ int main()
 
     // render loop
     // -----------
-    while (!glfwWindowShouldClose(window))
-    {
+    while (!glfwWindowShouldClose(window)) {
         // input
         // -----
         processInput(window);

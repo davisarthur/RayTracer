@@ -138,7 +138,22 @@ class DirectionalLight {
       float intensity;
       Vector3 dir;
 
+      DirectionalLight();
       DirectionalLight(float intensityIn, Vector3 dirIn);
 };
 
-Color rayColor(Ray r, float t0, float tf, std::vector<Surface*> surfaces, DirectionalLight lightSource);
+class Scene {
+   public:
+      Camera* cam;
+      DirectionalLight lightSource;
+      std::vector<Surface*> surfaces;
+
+      Scene(Camera& camIn, DirectionalLight lightSourceIn);
+      Scene(Camera& camIn, DirectionalLight lightSourceIn, std::vector<Surface*> surfacesIn);
+
+      void render(unsigned char* image, int width, int height, float tmin, float tmax);
+   
+   private:
+      void createSurfaces();
+      Color rayColor(Ray r, float t0, float tf);
+};

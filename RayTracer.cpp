@@ -1,5 +1,5 @@
 #include <math.h>
-#include "RayTracerMath.h"
+#include "RayTracer.h"
 #include <iostream>
 #include <cmath>
 #include <vector>
@@ -295,7 +295,6 @@ bool Plane::hit(Ray r, float t0, float tf, HitRecord& rec) {
    
    // determine intersection point
    float t = Vector3::dot((a - r.origin), n) / Vector3::dot(r.dir, n);
-   Vector3 x = r.val(t);
    if (t < t0 || t > tf) {
       return false;
    }
@@ -324,18 +323,91 @@ HitRecord::HitRecord(float tIn) {
 ///////////////////////
 // Directional Light //
 ///////////////////////
+DirectionalLight::DirectionalLight() {
+   intensity = 1.0;
+   dir = Vector3(0.0, 1.0, 0.0).normalized();
+}
+
 DirectionalLight::DirectionalLight(float intensityIn, Vector3 dirIn) {
    intensity = intensityIn;
    dir = dirIn.normalized();
 }
 
-Color rayColor(Ray r, float t0, float tf, std::vector<Surface*> surfaces, DirectionalLight lightSource) {
+///////////
+// Scene // 
+///////////
+Scene::Scene(Camera& camIn, DirectionalLight lightSourceIn) {
+   cam = &camIn;
+   lightSource = lightSourceIn;
+   createSurfaces();
+}
+
+Scene::Scene(Camera& camIn, DirectionalLight lightSourceIn, std::vector<Surface*> surfacesIn) {
+   cam = &camIn;
+   lightSource = lightSourceIn;
+   surfaces = surfacesIn;
+}
+
+void Scene::createSurfaces() {
+   // create materials
+   float surfaceIntensity = 0.4;
+   float specularIntensity = 0.25;
+   float ambientIntensity = 0.1;
+   float phongExp = 100.0;
+   Color red(255, 0, 0), green(0, 255, 0), blue(0, 0, 255), white(255, 255, 255), black(0, 0, 0);
+   Material sphere1Mat(red, white, red, surfaceIntensity, specularIntensity, ambientIntensity, phongExp);
+   Material sphere2Mat(green, white, green, surfaceIntensity, specularIntensity, ambientIntensity, phongExp); 
+   Material tetraMat(blue, white, blue, surfaceIntensity, specularIntensity, ambientIntensity, phongExp);
+   Material planeMat(white, white, white, surfaceIntensity, specularIntensity, ambientIntensity, phongExp);
+   planeMat.glazed = true;
+
+   // create spheres
+   float radius1 = 3.0, radius2 = 1.0;
+   Vector3 center1(0.0, radius1, -7.0), center2(2.0, radius2, 0.0);
+   Sphere* sphere1 = new Sphere(radius1, center1, sphere1Mat);
+   Sphere* sphere2 = new Sphere(radius2, center2, sphere2Mat);
+
+   // make tetrahedron
+   Vector3 t1(-9.0, 0.0, -3.0), t2(-6.0, 0.0, 0.0), t3(-4.0, 0.0, -4.0), t4(-7.0, 5.0, -2.0);
+   Triangle* front = new Triangle(t1, t2, t4, tetraMat);
+   Triangle* bottom = new Triangle(t1, t3, t2, tetraMat);
+   Triangle* left = new Triangle(t4, t3, t1, tetraMat);
+   Triangle* right = new Triangle(t3, t4, t2, tetraMat);
+
+   // make plane
+   Vector3 p1(0.0, 0.0, 10.0), p2(5.0, 0.0, 10.0), p3(2.5, 0.0, -5.0);
+   Plane* plane = new Plane(p1, p2, p3, planeMat);
+
+   // add each surface to surface list
+   surfaces.push_back(sphere1);
+   surfaces.push_back(sphere2);
+   surfaces.push_back(front);
+   surfaces.push_back(bottom);
+   surfaces.push_back(left);
+   surfaces.push_back(right);
+   surfaces.push_back(plane);
+}
+
+void Scene::render(unsigned char* image, int width, int height, float tmin, float tmax) {
+   for(int i = 0; i < height; i++) {
+      for (int j = 0; j < width; j++) {
+         int idx = (i * width + j) * 3;
+         Ray viewRay = cam->viewRay(j, i);
+         Color idxColor = rayColor(viewRay, tmin, tmax);
+         image[idx] = idxColor.red;
+         image[idx+1] = idxColor.green;
+         image[idx+2] = idxColor.blue;
+      }
+   }
+}
+
+Color Scene::rayColor(Ray r, float t0, float tf) {
    Surface *hitSurface;
    HitRecord rec;
    float t = tf;
    for (int k = 0; k < surfaces.size(); k++) {
       if (surfaces.at(k)->hit(r, t0, t, rec)) {
-         hitSurface = surfaces[k];
+         hitSurface = surfaces.at(k);
          t = rec.t;
       }
    }
@@ -357,7 +429,7 @@ Color rayColor(Ray r, float t0, float tf, std::vector<Surface*> surfaces, Direct
       if (hitSurface->material.glazed) {
          Ray mr(r.val(t), r.dir - normal * 2 * Vector3::dot(r.dir, normal));
          return Color(lR, lG, lB) + hitSurface->material.specularColor / 255.0f 
-            * rayColor(mr, t0, tf, surfaces, lightSource) * hitSurface->material.specularIntensity;
+            * rayColor(mr, t0, tf) * hitSurface->material.specularIntensity;
       }
       return Color(lR, lG, lB);
    }
