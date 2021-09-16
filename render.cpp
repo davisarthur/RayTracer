@@ -177,7 +177,7 @@ int main() {
     // camera settings
     Vector3 viewDir(0.0, -0.2, -1.0), up(0.0, 1.0, 0.0), viewPoint(0.0, 10.0, 50.0);
     float t = 10.0, b = -10.0, l = -10.0, r = 10.0;
-    float distToCam = 1.0;
+    float distToCam = 50.0;
     float tmin = 0.00001;
     float tmax = 10000.0;
 
@@ -226,6 +226,14 @@ int main() {
             pressed = true;
             std::cout << "Switching camera mode" << std::endl;
             switchCamera(image, width, height, tmin, tmax, scene);
+            unsigned char *data = &image[0];
+            if (data) {
+                glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+                glGenerateMipmap(GL_TEXTURE_2D);
+            }
+            else {
+                std::cout << "Failed to load texture" << std::endl;
+            }
         }
         else if (state == GLFW_RELEASE) {
             pressed = false;

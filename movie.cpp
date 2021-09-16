@@ -253,7 +253,7 @@ int main() {
          std::cout << "Failed to load texture" << std::endl;
       }
 
-      // render loop
+      // render
       // -----------
       // input
       // -----
