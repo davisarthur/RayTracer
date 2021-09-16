@@ -36,19 +36,28 @@ class Camera {
       virtual Ray viewRay(int nx, int ny) = 0;
       virtual void changeOrientation(Vector3 viewPoint, Vector3 up, Vector3 viewDir) = 0;
 
-   private:
-      virtual Vector3 pixelToPos(int xi, int yi) = 0;
+   protected:
+      Vector3 pixelToPos(int xi, int yi);
 };
 
 class OrthographicCamera : public Camera {
    public:
+      OrthographicCamera();
       OrthographicCamera(Vector3 viewPoint, Vector3 up, Vector3 viewDir, 
          float tIn, float bIn, float lIn, float rIn, int nxIn, int nyIn);
       Ray viewRay(int xi, int yi);
       void changeOrientation(Vector3 viewPoint, Vector3 up, Vector3 viewDir);
+};
 
-   private:
-      Vector3 pixelToPos(int xi, int yi);
+class PerspectiveCamera : public Camera {
+   public:
+      float distToCam;
+      
+      PerspectiveCamera();
+      PerspectiveCamera(float distToCamIn, Vector3 viewPoint, Vector3 up, Vector3 viewDir,
+         float tIn, float bIn, float lIn, float rIn, int nxIn, int nyIn);
+      Ray viewRay(int xi, int yi);
+      void changeOrientation(Vector3 viewPoint, Vector3 up, Vector3 viewDir);
 };
 
 class HitRecord {
@@ -144,14 +153,18 @@ class DirectionalLight {
 
 class Scene {
    public:
+      bool orthographic;
       Camera* cam;
+      OrthographicCamera orthoCam;
+      PerspectiveCamera perCam;
       DirectionalLight lightSource;
       std::vector<Surface*> surfaces;
 
-      Scene(Camera& camIn, DirectionalLight lightSourceIn);
-      Scene(Camera& camIn, DirectionalLight lightSourceIn, std::vector<Surface*> surfacesIn);
+      Scene(bool orthographicIn, float distToCamIn, Vector3 viewPoint, Vector3 up, Vector3 viewDir, 
+         float tIn, float bIn, float lIn, float rIn, int nxIn, int nyIn, DirectionalLight lightSourceIn);
 
       void render(unsigned char* image, int width, int height, float tmin, float tmax);
+      void switchCamera();
    
    private:
       void createSurfaces();

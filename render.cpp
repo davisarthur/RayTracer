@@ -20,6 +20,7 @@
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow *window);
 void saveImage(char* filepath, GLFWwindow* w);
+void switchCamera(unsigned char* image, int width, int height, float tmin, float tmax, Scene scene);
 
 // settings
 const unsigned int SCR_WIDTH = 800;
@@ -64,8 +65,7 @@ int main() {
     // glfw window creation
     // --------------------
     GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "Display RGB Array", NULL, NULL);
-    if (window == NULL)
-    {
+    if (window == NULL) {
         std::cout << "Failed to create GLFW window" << std::endl;
         glfwTerminate();
         return -1;
@@ -86,8 +86,7 @@ int main() {
     int success;
     char infoLog[512];
     glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
-    if (!success)
-    {
+    if (!success) {
         glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
         std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
     }
@@ -97,8 +96,7 @@ int main() {
     glCompileShader(fragmentShader);
     // check for shader compile errors
     glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
-    if (!success)
-    {
+    if (!success) {
         glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
         std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
     }
@@ -176,15 +174,15 @@ int main() {
     Vector3 lightDir(5.0, 5.0, 5.0);
     DirectionalLight lightSource(intensity, lightDir);
     
-    // create camera
+    // camera settings
     Vector3 viewDir(0.0, -0.2, -1.0), up(0.0, 1.0, 0.0), viewPoint(0.0, 10.0, 50.0);
     float t = 10.0, b = -10.0, l = -10.0, r = 10.0;
-    OrthographicCamera cam(viewPoint, up, viewDir, t, b, l, r, width, height);
+    float distToCam = 1.0;
     float tmin = 0.00001;
     float tmax = 10000.0;
 
-    // create scene
-    Scene scene(cam, lightSource);
+    // create and render scene
+    Scene scene(true, distToCam, viewPoint, up, viewDir, t, b, l, r, width, height, lightSource);
     scene.render(image, width, height, tmin, tmax);
 
     unsigned char *data = &image[0];
@@ -198,6 +196,7 @@ int main() {
 
     // render loop
     // -----------
+    bool pressed = false;
     while (!glfwWindowShouldClose(window)) {
         // input
         // -----
@@ -220,6 +219,17 @@ int main() {
         // -------------------------------------------------------------------------------
         glfwSwapBuffers(window);
         glfwPollEvents();
+
+        // respond to user input (based off of example: https://www.glfw.org/docs/3.3/input_guide.html#input_keyboard)
+        int state = glfwGetKey(window, GLFW_KEY_P);
+        if (state == GLFW_PRESS && !pressed) {
+            pressed = true;
+            std::cout << "Switching camera mode" << std::endl;
+            switchCamera(image, width, height, tmin, tmax, scene);
+        }
+        else if (state == GLFW_RELEASE) {
+            pressed = false;
+        }
     }
 
     // optional: de-allocate all resources once they've outlived their purpose:
@@ -236,19 +246,22 @@ int main() {
 
 // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
 // ---------------------------------------------------------------------------------------------------------
-void processInput(GLFWwindow *window)
-{
+void processInput(GLFWwindow *window) {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
 }
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
 // ---------------------------------------------------------------------------------------------
-void framebuffer_size_callback(GLFWwindow* window, int width, int height)
-{
+void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
     // make sure the viewport matches the new window dimensions; note that width and 
     // height will be significantly larger than specified on retina displays.
     glViewport(0, 0, width, height);
+}
+
+void switchCamera(unsigned char* image, int width, int height, float tmin, float tmax, Scene scene) {
+    scene.switchCamera();
+    scene.render(image, width, height, tmin, tmax);
 }
 
 // code to save an image based on this online tutorial: https://lencerf.github.io/post/2019-09-21-save-the-opengl-rendering-to-image-file/

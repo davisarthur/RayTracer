@@ -87,9 +87,22 @@ Vector3 Ray::val(float t) {
    return Vector3(x, y, z);
 }
 
+////////////
+// Camera //
+////////////
+Vector3 Camera::pixelToPos(int xi, int yi) {
+   float ucoord = l + (r - l) * (xi + 0.5) / nx;
+   float vcoord = b + (t - b) * (yi + 0.5) / ny;
+   return u * ucoord + v * vcoord;
+}
+
 /////////////////////////
 // Orthographic Camera //
 /////////////////////////
+OrthographicCamera::OrthographicCamera() {
+
+}
+
 OrthographicCamera::OrthographicCamera(Vector3 viewPoint, Vector3 up, Vector3 viewDir, 
    float tIn, float bIn, float lIn, float rIn, int nxIn, int nyIn) {
    w = viewDir * -1.0f;
@@ -119,10 +132,41 @@ void OrthographicCamera::changeOrientation(Vector3 viewPoint, Vector3 up, Vector
    v = Vector3::cross(w, u);
 }
 
-Vector3 OrthographicCamera::pixelToPos(int xi, int yi) {
-   float ucoord = l + (r - l) * (xi + 0.5) / nx;
-   float vcoord = b + (t - b) * (yi + 0.5) / ny;
-   return u * ucoord + v * vcoord;
+////////////////////////
+// Perspective Camera //
+////////////////////////
+PerspectiveCamera::PerspectiveCamera() {
+
+}
+
+PerspectiveCamera::PerspectiveCamera(float distToCamIn, Vector3 viewPoint, Vector3 up, Vector3 viewDir, 
+   float tIn, float bIn, float lIn, float rIn, int nxIn, int nyIn) {
+   distToCam = distToCamIn;
+   w = viewDir * -1.0f;
+   w = w.normalized();
+   e = viewPoint;
+   u = Vector3::cross(up, w);
+   u = u.normalized();
+   v = Vector3::cross(w, u);
+   t = tIn;
+   b = bIn;
+   l = lIn;
+   r = rIn;
+   nx = nxIn;
+   ny = nyIn;
+}
+
+Ray PerspectiveCamera::viewRay(int xi, int yi) {
+   Vector3 origin = e;
+   Vector3 dir = (w * -distToCam + pixelToPos(xi, yi)).normalized();
+   return Ray(origin, dir);
+}
+
+void PerspectiveCamera::changeOrientation(Vector3 viewPoint, Vector3 up, Vector3 viewDir) {
+   w = (viewDir * -1.0f).normalized();
+   e = viewPoint;
+   u = Vector3::cross(up, w).normalized();
+   v = Vector3::cross(w, u);
 }
 
 ///////////
@@ -336,16 +380,19 @@ DirectionalLight::DirectionalLight(float intensityIn, Vector3 dirIn) {
 ///////////
 // Scene // 
 ///////////
-Scene::Scene(Camera& camIn, DirectionalLight lightSourceIn) {
-   cam = &camIn;
+Scene::Scene(bool orthographicIn, float distToCamIn, Vector3 viewPoint, Vector3 up, Vector3 viewDir, 
+   float tIn, float bIn, float lIn, float rIn, int nxIn, int nyIn, DirectionalLight lightSourceIn) {
+   orthographic = orthographicIn;
+   orthoCam = OrthographicCamera(viewPoint, up, viewDir, tIn, bIn, lIn, rIn, nxIn, nyIn);
+   perCam = PerspectiveCamera(distToCamIn, viewPoint, up, viewDir, tIn, bIn, lIn, rIn, nxIn, nyIn);
+   if (orthographic) {
+      cam = &orthoCam;
+   }
+   else{
+      cam = &perCam;
+   }
    lightSource = lightSourceIn;
    createSurfaces();
-}
-
-Scene::Scene(Camera& camIn, DirectionalLight lightSourceIn, std::vector<Surface*> surfacesIn) {
-   cam = &camIn;
-   lightSource = lightSourceIn;
-   surfaces = surfacesIn;
 }
 
 void Scene::createSurfaces() {
@@ -399,6 +446,16 @@ void Scene::render(unsigned char* image, int width, int height, float tmin, floa
          image[idx+2] = idxColor.blue;
       }
    }
+}
+
+void Scene::switchCamera() {
+   if (orthographic) {
+      cam = &perCam;
+   }
+   else {
+      cam = &orthoCam;
+   }
+   orthographic = !orthographic;
 }
 
 Color Scene::rayColor(Ray r, float t0, float tf) {
