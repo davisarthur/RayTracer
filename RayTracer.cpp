@@ -483,11 +483,15 @@ Color Scene::rayColor(Ray r, float t0, float tf) {
          + a * hitSurface->material.ambientColor.green);
       float lB = (d * hitSurface->material.surfaceColor.blue + s * hitSurface->material.specularColor.blue
          + a * hitSurface->material.ambientColor.blue);
+
       if (hitSurface->material.glazed) {
          Ray mr(r.val(t), r.dir - normal * 2 * Vector3::dot(r.dir, normal));
-         return Color(lR, lG, lB) + hitSurface->material.specularColor / 255.0f 
+         Color reflectedColor = hitSurface->material.specularColor / 255.0f 
             * rayColor(mr, t0, tf) * hitSurface->material.specularIntensity;
+         Color outputColor = Color(lR, lG, lB) + reflectedColor;
+         return outputColor;
       }
+
       return Color(lR, lG, lB);
    }
    return Color(0, 0, 0);
