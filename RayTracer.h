@@ -160,7 +160,7 @@ class Scene {
       DirectionalLight lightSource;
       std::vector<Surface*> surfaces;
 
-      Scene(bool orthographicIn, float distToCamIn, Vector3 viewPoint, Vector3 up, Vector3 viewDir, 
+      Scene(float distToCamIn, Vector3 viewPoint, Vector3 up, Vector3 viewDir, 
          float tIn, float bIn, float lIn, float rIn, int nxIn, int nyIn, DirectionalLight lightSourceIn);
 
       void render(unsigned char* image, int width, int height, float tmin, float tmax);

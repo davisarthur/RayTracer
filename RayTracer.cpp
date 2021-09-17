@@ -380,9 +380,9 @@ DirectionalLight::DirectionalLight(float intensityIn, Vector3 dirIn) {
 ///////////
 // Scene // 
 ///////////
-Scene::Scene(bool orthographicIn, float distToCamIn, Vector3 viewPoint, Vector3 up, Vector3 viewDir, 
+Scene::Scene(float distToCamIn, Vector3 viewPoint, Vector3 up, Vector3 viewDir, 
    float tIn, float bIn, float lIn, float rIn, int nxIn, int nyIn, DirectionalLight lightSourceIn) {
-   orthographic = orthographicIn;
+   orthographic = true;
    orthoCam = OrthographicCamera(viewPoint, up, viewDir, tIn, bIn, lIn, rIn, nxIn, nyIn);
    perCam = PerspectiveCamera(distToCamIn, viewPoint, up, viewDir, tIn, bIn, lIn, rIn, nxIn, nyIn);
    if (orthographic) {
@@ -451,9 +451,11 @@ void Scene::render(unsigned char* image, int width, int height, float tmin, floa
 void Scene::switchCamera() {
    if (orthographic) {
       cam = &perCam;
+      std::cout << "switching to perspective" << std::endl;
    }
    else {
       cam = &orthoCam;
+      std::cout << "switching to orthographic" << std::endl;
    }
    orthographic = !orthographic;
 }

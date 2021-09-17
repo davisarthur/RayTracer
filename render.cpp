@@ -20,7 +20,7 @@
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow *window);
 void saveImage(char* filepath, GLFWwindow* w);
-void switchCamera(unsigned char* image, int width, int height, float tmin, float tmax, Scene scene);
+void switchCamera(unsigned char* image, int width, int height, float tmin, float tmax, Scene* scene);
 
 // settings
 const unsigned int SCR_WIDTH = 800;
@@ -182,7 +182,7 @@ int main() {
     float tmax = 10000.0;
 
     // create and render scene
-    Scene scene(true, distToCam, viewPoint, up, viewDir, t, b, l, r, width, height, lightSource);
+    Scene scene(distToCam, viewPoint, up, viewDir, t, b, l, r, width, height, lightSource);
     scene.render(image, width, height, tmin, tmax);
 
     unsigned char *data = &image[0];
@@ -225,7 +225,7 @@ int main() {
         if (state == GLFW_PRESS && !pressed) {
             pressed = true;
             std::cout << "Switching camera mode" << std::endl;
-            switchCamera(image, width, height, tmin, tmax, scene);
+            switchCamera(image, width, height, tmin, tmax, &scene);
             unsigned char *data = &image[0];
             if (data) {
                 glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
@@ -267,9 +267,9 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
     glViewport(0, 0, width, height);
 }
 
-void switchCamera(unsigned char* image, int width, int height, float tmin, float tmax, Scene scene) {
-    scene.switchCamera();
-    scene.render(image, width, height, tmin, tmax);
+void switchCamera(unsigned char* image, int width, int height, float tmin, float tmax, Scene* scene) {
+    scene->switchCamera();
+    scene->render(image, width, height, tmin, tmax);
 }
 
 // code to save an image based on this online tutorial: https://lencerf.github.io/post/2019-09-21-save-the-opengl-rendering-to-image-file/
