@@ -222,7 +222,7 @@ Material::Material() {
    specularColor = Color(0, 0, 0);
    ambientColor = Color(0, 0, 0);
    ambientIntensity = 1.0;
-   phongExp = 100.0;
+   phongExp = 1.0;
    glazed = false;
 }
 
@@ -400,8 +400,8 @@ Scene::Scene(float distToCamIn, Vector3 viewPoint, Vector3 up, Vector3 viewDir,
 void Scene::createSurfaces() {
    // create materials
    float surfaceIntensity = 0.4;
-   float specularIntensity = 0.25;
-   float ambientIntensity = 0.1;
+   float specularIntensity = 0.4;
+   float ambientIntensity = 0.3;
    float phongExp = 100.0;
    Color red(255, 0, 0), green(0, 255, 0), blue(0, 0, 255), white(255, 255, 255), black(0, 0, 0);
    Material sphere1Mat(red, white, red, surfaceIntensity, specularIntensity, ambientIntensity, phongExp);
