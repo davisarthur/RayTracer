@@ -266,10 +266,12 @@ bool Sphere::hit(Ray r, float t0, float tf, HitRecord& rec) {
       - Vector3::dot(d, d) * (Vector3::dot((e - c), (e - c)) - pow(R, 2.0));
    bool hit = false;
    if (discriminant > 0.0) {
-      float t = (Vector3::dot(d * -1.0, (e - c)) - discriminant) / Vector3::dot(d, d);
-      if (t > t0 && t < tf) {
+      float t1 = (Vector3::dot(d * -1.0, (e - c)) - pow(discriminant, 0.5)) / Vector3::dot(d, d);
+      
+      if (t1 > t0 && t1 < tf) {
          hit = true;
-         rec = HitRecord(t);
+         rec = HitRecord(t1);
+         return hit;
       }
    }
    return hit;
@@ -451,11 +453,11 @@ void Scene::render(unsigned char* image, int width, int height, float tmin, floa
 void Scene::switchCamera() {
    if (orthographic) {
       cam = &perCam;
-      std::cout << "switching to perspective" << std::endl;
+      std::cout << "Switching to perspective camera." << std::endl;
    }
    else {
       cam = &orthoCam;
-      std::cout << "switching to orthographic" << std::endl;
+      std::cout << "Switching to orthographic camera." << std::endl;
    }
    orthographic = !orthographic;
 }
@@ -471,30 +473,40 @@ Color Scene::rayColor(Ray r, float t0, float tf) {
       }
    }
    if (rec.hit) {
-      Vector3 normal = hitSurface->normal(r.val(t));
-      Vector3 h = (r.dir * -1.0 + lightSource.dir).normalized();
-      float d = hitSurface->material.surfaceIntensity * lightSource.intensity 
-         * std::max(0.0f, Vector3::dot(normal, lightSource.dir));
-      float s = hitSurface->material.specularIntensity * lightSource.intensity 
-         * pow(std::max(0.0f, Vector3::dot(normal, h)), hitSurface->material.phongExp);
-      float a = hitSurface->material.ambientIntensity;
-                
-      float lR = (d * hitSurface->material.surfaceColor.red + s * hitSurface->material.specularColor.red
-         + a * hitSurface->material.ambientColor.red);
-      float lG = (d * hitSurface->material.surfaceColor.green + s * hitSurface->material.specularColor.green
-         + a * hitSurface->material.ambientColor.green);
-      float lB = (d * hitSurface->material.surfaceColor.blue + s * hitSurface->material.specularColor.blue
-         + a * hitSurface->material.ambientColor.blue);
+      // add ambient shading
+      Vector3 pos = r.val(rec.t);
+      Color c = hitSurface->material.ambientColor * hitSurface->material.ambientIntensity;
+
+      // see if object is in shadow of another object
+      Ray shadowRay(pos, lightSource.dir);
+      HitRecord shadowRec;
+
+      for (int k = 0; k < surfaces.size(); k++) {
+         if (surfaces.at(k)->hit(shadowRay, t0, tf, shadowRec)) {
+            break;
+         }
+      }
+
+      // if an object is not in a shadow, add specular and diffuse shading
+      if (!shadowRec.hit) {
+         Vector3 normal = hitSurface->normal(r.val(t));
+         Vector3 h = (r.dir * -1.0 + lightSource.dir).normalized();
+         float d = hitSurface->material.surfaceIntensity * lightSource.intensity 
+            * std::max(0.0f, Vector3::dot(normal, lightSource.dir));
+         float s = hitSurface->material.specularIntensity * lightSource.intensity 
+            * pow(std::max(0.0f, Vector3::dot(normal, h)), hitSurface->material.phongExp);
+         c = c + hitSurface->material.surfaceColor * d + hitSurface->material.surfaceColor * s;
+      }
 
       if (hitSurface->material.glazed) {
+         Vector3 normal = hitSurface->normal(r.val(t));
          Ray mr(r.val(t), r.dir - normal * 2 * Vector3::dot(r.dir, normal));
          Color reflectedColor = hitSurface->material.specularColor / 255.0f 
             * rayColor(mr, t0, tf) * hitSurface->material.specularIntensity;
-         Color outputColor = Color(lR, lG, lB) + reflectedColor;
-         return outputColor;
+         return c + reflectedColor;
       }
 
-      return Color(lR, lG, lB);
+      return c;
    }
    return Color(0, 0, 0);
 }

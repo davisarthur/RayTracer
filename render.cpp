@@ -171,14 +171,14 @@ int main() {
 
     // create light source
     float intensity = 1.0;
-    Vector3 lightDir(5.0, 5.0, 5.0);
+    Vector3 lightDir(2.0, 4.0, 2.0);
     DirectionalLight lightSource(intensity, lightDir);
     
     // camera settings
     Vector3 viewDir(0.0, -0.2, -1.0), up(0.0, 1.0, 0.0), viewPoint(0.0, 10.0, 50.0);
     float t = 10.0, b = -10.0, l = -10.0, r = 10.0;
     float distToCam = 40.0;
-    float tmin = 0.001;
+    float tmin = 0.0001;
     float tmax = 10000.0;
 
     // create and render scene
