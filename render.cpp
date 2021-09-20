@@ -177,7 +177,7 @@ int main() {
     // camera settings
     Vector3 viewDir(0.0, -0.2, -1.0), up(0.0, 1.0, 0.0), viewPoint(0.0, 10.0, 50.0);
     float t = 10.0, b = -10.0, l = -10.0, r = 10.0;
-    float distToCam = 40.0;
+    float distToCam = 10.0;
     float tmin = 0.0001;
     float tmax = 10000.0;
 

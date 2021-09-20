@@ -386,7 +386,7 @@ Scene::Scene(float distToCamIn, Vector3 viewPoint, Vector3 up, Vector3 viewDir,
    float tIn, float bIn, float lIn, float rIn, int nxIn, int nyIn, DirectionalLight lightSourceIn) {
    orthographic = true;
    orthoCam = OrthographicCamera(viewPoint, up, viewDir, tIn, bIn, lIn, rIn, nxIn, nyIn);
-   perCam = PerspectiveCamera(distToCamIn, viewPoint, up, viewDir, tIn, bIn, lIn, rIn, nxIn, nyIn);
+   perCam = PerspectiveCamera(distToCamIn, viewPoint + Vector3(0.0, -8.0, -40.0), up, viewDir, tIn, bIn, lIn, rIn, nxIn, nyIn);
    if (orthographic) {
       cam = &orthoCam;
    }
@@ -401,7 +401,7 @@ void Scene::createSurfaces() {
    // create materials
    float surfaceIntensity = 0.4;
    float specularIntensity = 0.4;
-   float ambientIntensity = 0.3;
+   float ambientIntensity = 0.2;
    float phongExp = 100.0;
    Color red(255, 0, 0), green(0, 255, 0), blue(0, 0, 255), white(255, 255, 255), black(0, 0, 0);
    Material sphere1Mat(red, white, red, surfaceIntensity, specularIntensity, ambientIntensity, phongExp);
