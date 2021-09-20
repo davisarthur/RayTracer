@@ -3,7 +3,7 @@
 My ray tracer includes four files that can be compiled and run. 
 
 ## Render
-The primary program is ```render.cpp```. This program renders my demo scene using an orthographic or perspective camera. The camera type can be toggled by pressing the 'p' key on your key board. Use the following command to compile this program on Mac:
+The primary program is ```render.cpp```. This program renders my demo scene using an orthographic or perspective camera. The camera type can be toggled by pressing the 'p' key on your keyboard. Use the following command to compile this program on Mac:
 ```
 g++ -lglfw -lglew -framework OpenGL render.cpp RayTracer.cpp -o render.out
 ```
