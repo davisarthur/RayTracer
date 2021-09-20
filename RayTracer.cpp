@@ -79,7 +79,7 @@ float Vector3::dot(Vector3 v1, Vector3 v2) {
 /////////
 Ray::Ray(Vector3 originIn, Vector3 dirIn) {
    origin = originIn;
-   dir = dirIn;
+   dir = dirIn.normalized();
 }
 
 Vector3 Ray::val(float t) {

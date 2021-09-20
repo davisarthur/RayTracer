@@ -208,7 +208,7 @@ int main() {
    float finalHeight = -sunRadius * 2.0;
    float deltaHeight = (finalHeight - initialHeight) / (float) (dur * fps);
 
-   for (int n = 0; n < fps * dur; n++) {
+   for (int n = 0; n <= fps * dur; n++) {
 
       // calculate new sun height
       float sunHeight = initialHeight + deltaHeight * n;
