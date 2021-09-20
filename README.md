@@ -26,6 +26,9 @@ On Windows or Linux:
 g++ -lglfw -lglew movie1.cpp RayTracer.cpp -o movie1.out
 ```
 Finally, to run the program use the following command: ```./movie1.out```
+
+Image files will be written to the folder ```movie1```.
+
 ### Movie 2
 The second movie rotates the camera's position around the scene, while focusing on the scene's origin. On Mac this program can be compiled using the following command:
 ```
@@ -37,6 +40,8 @@ g++ -lglfw -lglew movie2.cpp RayTracer.cpp -o movie2.out
 ```
 Finally, to run the program use the following command: ```./movie2.out```
 
+Image files will be written to the folder ```movie2```.
+
 ### Movie 3
 The third movie depicts a star setting on a planet's horizon with no atmosphere. On Mac this program can be compiled using the following command:
 ```
@@ -47,3 +52,5 @@ On Windows or Linux:
 g++ -lglfw -lglew movie3.cpp RayTracer.cpp -o movie3.out
 ```
 Finally, to run the program use the following command: ```./movie3.out```
+
+Image files will be written to the folder ```movie3```.
