@@ -5,6 +5,8 @@
 #include <vector>
 #include <algorithm>
 
+bool printDetails = true;
+
 /////////////
 // Vector3 //
 /////////////
@@ -443,6 +445,12 @@ void Scene::render(unsigned char* image, int width, int height, float tmin, floa
          int idx = (i * width + j) * 3;
          Ray viewRay = cam->viewRay(j, i);
          Color idxColor = rayColor(viewRay, tmin, tmax);
+         if (j == 256 && i == 256) {
+            printDetails = true;
+         }
+         else {
+            printDetails = false;
+         }
          image[idx] = idxColor.red;
          image[idx+1] = idxColor.green;
          image[idx+2] = idxColor.blue;
@@ -482,6 +490,10 @@ Color Scene::rayColor(Ray r, float t0, float tf) {
       HitRecord shadowRec;
 
       for (int k = 0; k < surfaces.size(); k++) {
+         // ignore the shadow of the sun
+         if (k == 7) {
+            continue;
+         }
          if (surfaces.at(k)->hit(shadowRay, t0, tf, shadowRec)) {
             break;
          }
@@ -492,7 +504,7 @@ Color Scene::rayColor(Ray r, float t0, float tf) {
          Vector3 normal = hitSurface->normal(r.val(t));
          Vector3 h = (r.dir * -1.0 + lightSource.dir).normalized();
          float d = hitSurface->material.surfaceIntensity * lightSource.intensity 
-            * std::max(0.0f, Vector3::dot(normal, lightSource.dir));
+            * std::max(0.0f, Vector3::dot(normal.normalized(), lightSource.dir.normalized()));
          float s = hitSurface->material.specularIntensity * lightSource.intensity 
             * pow(std::max(0.0f, Vector3::dot(normal, h)), hitSurface->material.phongExp);
          c = c + hitSurface->material.surfaceColor * d + hitSurface->material.surfaceColor * s;

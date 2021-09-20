@@ -191,7 +191,6 @@ int main() {
 
    for (int n = 0; n < fps * dur; n++) {
 
-      // 30 frames per second
       float time = n / (float) fps;
 
       // reorient camera

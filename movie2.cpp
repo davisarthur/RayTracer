@@ -186,15 +186,17 @@ int main() {
    // create scene
    Scene scene(distToCam, viewPoint, up, viewDir, t, b, l, r, width, height, lightSource);
 
-   for (int n = 0; n < 30; n++) {
+   int fps = 60;
+   int period = 2;
+   int dur = 2;
+   for (int n = 0; n < fps * dur; n++) {
 
-      // 30 frames per second
-      float time = n / 30.0f;
+      float time = n / (float) fps;
 
       // move and reorient camera
-      float camX = 50.0 * sin(time * 2.0 * M_PI);
+      float camX = 50.0 * sin(time * 2.0 * M_PI / (float) period);
       float camY = 10.0;
-      float camZ = 50.0 * cos(time * 2.0 * M_PI);
+      float camZ = 50.0 * cos(time * 2.0 * M_PI / (float) period);
       Vector3 newViewPoint(camX, camY, camZ);
       Vector3 focus(0.0, 0.0, 0.0);
       Vector3 newViewDir = (focus - newViewPoint).normalized();
@@ -238,7 +240,7 @@ int main() {
       glfwPollEvents();
       */
 
-      std::string fnameTemp = "movie/test" + std::to_string(n) + ".png";
+      std::string fnameTemp = "movie2/img" + std::to_string(n) + ".png";
       char fname[fnameTemp.length()];
       strcpy(fname, fnameTemp.c_str());
       saveImage(fname, window);
