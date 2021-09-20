@@ -9,7 +9,7 @@ g++ -lglfw -lglew -framework OpenGL render.cpp RayTracer.cpp -o render.out
 ```
 I do not own a Windows or Linux machine, but I believe the following command can be used for compilation on those platforms:
 ```
-g++ -lglfw -lglew -framework OpenGL render.cpp RayTracer.cpp -o render.out
+g++ -lglfw -lglew render.cpp RayTracer.cpp -o render.out
 ```
 Once compiled, the program can be run using the following command: ```./render.out```
 
@@ -23,7 +23,7 @@ g++ -lglfw -lglew -framework OpenGL movie1.cpp RayTracer.cpp -o movie1.out
 ```
 On Windows or Linux:
 ```
-g++ -lglfw -lglew -framework OpenGL movie1.cpp RayTracer.cpp -o movie1.out
+g++ -lglfw -lglew movie1.cpp RayTracer.cpp -o movie1.out
 ```
 Finally, to run the program use the following command: ```./movie1.out```
 ### Movie 2
@@ -33,7 +33,7 @@ g++ -lglfw -lglew -framework OpenGL movie2.cpp RayTracer.cpp -o movie2.out
 ```
 On Windows or Linux:
 ```
-g++ -lglfw -lglew -framework OpenGL movie2.cpp RayTracer.cpp -o movie2.out
+g++ -lglfw -lglew movie2.cpp RayTracer.cpp -o movie2.out
 ```
 Finally, to run the program use the following command: ```./movie2.out```
 
@@ -44,6 +44,6 @@ g++ -lglfw -lglew -framework OpenGL movie3.cpp RayTracer.cpp -o movie3.out
 ```
 On Windows or Linux:
 ```
-g++ -lglfw -lglew -framework OpenGL movie3.cpp RayTracer.cpp -o movie3.out
+g++ -lglfw -lglew movie3.cpp RayTracer.cpp -o movie3.out
 ```
 Finally, to run the program use the following command: ```./movie3.out```
