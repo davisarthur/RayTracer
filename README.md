@@ -1,5 +1,4 @@
 # RayTracer
-
 My ray tracer includes four files that can be compiled and run. 
 
 ## Render
